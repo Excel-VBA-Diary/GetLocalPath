@@ -13,7 +13,7 @@ OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返�
   
 この時、OneDriveのローカルパスは次のように変換できます。  
   
-    C:\Users\<USERNAME>\OneDrive\<FOLDER-PATH>
+    C:\Users\<USER-NAME>\OneDrive\<FOLDER-PATH>
     
 しかし、OneDrive for Business においては、このURLパスが複雑になります。以下はその例です。  
 
