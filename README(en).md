@@ -1,23 +1,27 @@
 # GetLocalPath
 # Convert the URL returned by Workbook.Path Property in Excel VBA on OneDrive to a local path.  
 
-OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返す問題が起きます。そのブックのローカルパスを取得できず、FileSystemObjectまで使えなくなるという不便な状態になります。  
+## Problem to be solved  
   
-この問題の解決にはいくつかの方法が提案されています。個人用OneDriveであればURLパスを文字列処理してローカルパスに変換する方法があります。
-個人用OneDriveの場合、Workbook.Path プロパティが返すURLは次の形式となります。\<CID>は個人用に割り当てられた16桁の番号で、その後にサブフォルダのパス\<FOLDER-PATH>が続きます。  
+There is a problem with the Workbook.Path property returning a URL when I run Excel VBA on OneDrive. This is inconvenient because you cannot get the local path of that book and even FileSystemObject is not available.  
+  
+Several methods have been proposed to solve this problem. For personal OneDrive, there is a way to convert the URL path to a local path by processing the URL path as a string.
+For a personal OneDrive, the URL returned by the Workbook.Path property will be of the form \<CID> is a 16-digit number assigned for personal use, followed by the path to the subfolder, \<FOLDER-PATH>.  
   
     https://d.docs.live.net/<CID>/<FOLDER-PATH>
   
-この時、OneDriveのローカルパスは次のように変換できます。  
+At this time, the OneDrive local path can be converted as follows:    
   
     C:\Users\<USERNAME>\OneDrive\<FOLDER-PATH>
     
-しかし、OneDrive for Business においては、このURLパスが複雑になります。以下はその例です。  
+In OneDrive for Business, however, this URL path can be complicated. Here is an example:  
 
     https://<TENANT>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
     
     https://<TENANT>-my.sharepoint.com/personal/<USER-PRINCIPAL-NAME>/Documents/<FOLDER-PATH>
   
-ここに挙げたURLパスは一例に過ぎず、これを文字列変換だけでローカルパスに変換するのは簡単ではありません。例えば、URLパスに含まれる\<TENANT>はロカールパスに含まれる<テナント名>とは異なるのでそのまま使えません。また、SharePointやTeamsでは「同期」または「OneDriveへのショートカットの追加」によってOneDriveにフォルダーまたはショートカットを追加できますが、このフォルダーやショートカットが多数ある場合、URLパスがどのショートカットに対応するかURLパスから判別するのは困難です。  
+The URL paths listed here are only an example, and it is not easy to convert them to local paths using only string conversion. For example, the \<TENANT> in the URL path is not the same as the <tenant name> in the locale path, so it cannot be used as is. Also, in SharePoint and Teams, you can add folders or shortcuts to OneDrive via "Sync" or "Add Shortcut to OneDrive", but if you have many of these folders or shortcuts, it is difficult to determine which URL path corresponds to which shortcut. It is difficult to determine from the URL path which shortcut corresponds to which folder or shortcut.  
   
-このような理由から、Workbook.Path プロパティが返すURLパスを文字列処理だけでローカルパスに変換できないことがあります。
+For this reason, the URL path returned by the Workbook.Path property may not be converted to a local path using only string processing.  
+  
+## Proposed Solution  
