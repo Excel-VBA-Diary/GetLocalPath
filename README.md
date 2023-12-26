@@ -18,7 +18,7 @@ OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返�
 しかし、OneDrive for Business においては、このURLパスが複雑になります。以下はその例です。  
 
     https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
-
+  
     https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
   
 ここに挙げたURLパスは一例に過ぎず、これを文字列変換だけでローカルパスに変換するのは簡単ではありません。特に、SharePointやTeamsでは「同期」や「OneDriveへのショートカットの追加」によってOneDriveにショートカットを追加できますが、ショートカットが多数ある場合、URLパスがどのショートカットに対応するかURLパスから判別することはできません。  
