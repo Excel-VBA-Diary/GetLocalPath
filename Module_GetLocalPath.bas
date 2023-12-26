@@ -15,6 +15,10 @@ Option Explicit
 '   Local Path (String)
 '   Return null string if conversion to local path fails
 '
+' Usage:
+'   Dim lp As String
+'   lp = GetLocalPath(ThisWorkbook.Path)
+'
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Last Update: December 26, 2023
 ' License: MIT
@@ -172,6 +176,9 @@ Skip_To_Next:
 
 Verify_Folder_Exists:
                    
+    '実際にフォルダーが存在するか確認する
+    'Verify that the folder actually exists
+    
     On Error Resume Next
     returnDir = Dir(tmpLocalPath, vbDirectory)
     errNum = Err.Number
