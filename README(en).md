@@ -12,7 +12,7 @@ For a personal OneDrive, the URL path returned by the Workbook.Path property has
   
 At this time, the OneDrive local path can be converted as follows:    
   
-    C:\Users\<USERNAME>\OneDrive\<FOLDER-PATH>
+    C:\Users\<USER-NAME>\OneDrive\<FOLDER-PATH>
     
 In OneDrive for Business, however, this URL path can be complicated. Here is an example:  
 
