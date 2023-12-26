@@ -20,7 +20,9 @@ Option Explicit
 '   lp = GetLocalPath(ThisWorkbook.Path)
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
-' Last Update: December 26, 2023
+' Created: December 26, 2023
+' Last Updated: December 26, 2023
+' Version: 1.0
 ' License: MIT
 '-------------------------------------------------------------------------------
 
