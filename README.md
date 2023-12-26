@@ -4,9 +4,15 @@
 
 ## 解決したい問題  
   
-OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返す問題が起きます。自分自身のローカルパスを取得できず、FileSystemObjectまで使えなくなるという不便な状態になります。  
+OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返す問題が起きます。そのブックのローカルパスを取得できず、FileSystemObjectまで使えなくなるという不便な状態になります。  
   
-この問題の解決にはいくつかの方法が提案されていますが、URLパスを文字列処理してローカルパスに変換する方法はうまくいかない場合があります。特に OneDrive for Business においてはURLに含まれるテナントコードをテナント名に変換するなどの処理が必要で、文字列処理による方法では解決できません。  
+この問題の解決にはいくつかの方法が提案されています。個人用OneDriveであればURLパスを文字列処理してローカルパスに変換する方法があります。
+
+    https://d.docs.live.net/<CID>/<SUB-FOLDER-PATH>
+
+    C:\Users\<USERNAME>\OneDrive\<SUB-FOLDER-PATH>
+
+しかし、OneDrive for Business においてはURLに含まれるテナントコードをテナント名に変換するなどの処理が必要で、文字列処理による方法では解決できません。  
   
 SharePointやTeamsでは「OneDriveへのショートカットの追加」によってOneDriveにショートカットを追加できますが、URLパスがどのショートカットに対応するか判別することは困難です。  
   
