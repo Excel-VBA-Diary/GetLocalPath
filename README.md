@@ -17,12 +17,19 @@ OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返�
     
 しかし、OneDrive for Business においては、このURLパスが複雑になります。以下はその例です。  
 
-    https://<TENANT>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
+    https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
     
-    https://<TENANT>-my.sharepoint.com/personal/<USER-PRINCIPAL-NAME>/Documents/<FOLDER-PATH>
+    https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
   
-ここに挙げたURLパスは一例に過ぎず、これを文字列変換だけでローカルパスに変換するのは簡単ではありません。例えば、URLパスに含まれる\<TENANT>はロカールパスに含まれる<テナント名>とは異なるのでそのまま使えません。また、SharePointやTeamsでは「同期」または「OneDriveへのショートカットの追加」によってOneDriveにフォルダーまたはショートカットを追加できますが、このフォルダーやショートカットが多数ある場合、URLパスがどのショートカットに対応するかURLパスから判別するのは困難です。  
+ここに挙げたURLパスは一例に過ぎず、これを文字列変換だけでローカルパスに変換するのは簡単ではありません。例えば、URLパスに含まれる\<TENANT-NAME>はロカールパスに含まれる<テナント名>とは異なるのでそのまま使えません。また、SharePointやTeamsでは「同期」または「OneDriveへのショートカットの追加」によってOneDriveにフォルダーまたはショートカットフォルダーを追加できますが、一般的にローカルパスに含まれる<テナント名>の表記が微妙に異なります。    
   
+「同期」の場合：
+    C:\Users\<USER-NAME>\<テナント名>\<フォルダー名>
+  
+「OneDriveへのショートカットの追加」の場合：  
+    C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダー名>
+  
+このように「同期」と「OneDriveへのショートカットの追加」が混在したり、フォルダーが多数ある場合、URLパスがどのフォルダーに対応するかURLパスから判別するのは大変難しくなります。  
 このような理由から、Workbook.Path プロパティが返すURLパスを文字列処理だけでローカルパスに変換できないことがあります。
 
 ## 提案する解決策  
