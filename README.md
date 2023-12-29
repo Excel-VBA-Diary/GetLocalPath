@@ -1,6 +1,7 @@
 # GetLocalPath
 # OneDrive上のExcel VBAでWorkbook.Pathプロパティが返すURLをローカルパスに変換する。  
 #### README(en).md for English version    
+最終更新日：2023年12月29日
 
 ## 解決したい問題  
   
@@ -38,7 +39,7 @@ URLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ここ
   
 ## 提案する解決策 
 
-# OneDriveのマウント情報
+### OneDriveのマウント情報
   
 OneDriveのマウント情報は次のレジストキー配下にあります。
 ```
@@ -54,7 +55,7 @@ UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、M
 例えば、次のようなケースを想定します。
 ```
 UrlNameSpace ： https://xxxx.sharepoint.com/sites/Test/Shared Documents/  
-MountPoint   ： c:\Users\diary\OneDrive - MyCompany\`#0024FF`General - Work`#000000  
+MountPoint   ： c:\Users\diary\OneDrive - MyCompany\General - Work  
 Workbook.Path： https://xxxx.sharepoint.com/sites/Test/Shared Documents/General/folder1 
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
@@ -63,6 +64,24 @@ SharePoint サイトのドキュメントライブラリの構造から、Workbo
 ```
 c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
 ```
+### GetLocalPath 関数
+
+OneDriveのマウント情報を使ってURLパスをローカルパスに変換する関数が「GetLocalPath関数」です。
+Module_GetLocalPath.bas はVBAモジュールをエクスポートしたもので、この中にGet「LocalPath関数」が含まれています。Module_GetLocalPath.basをそのままインポートするか必要な部分をコピペしてお使いください。
+#### 構文
+GetLocalPath(UrlPath, [UseCache])  
+
+|引き数|説明|
+----|----
+|UrlPath|必須。Workbook.Pathが返すURLパスを指定します。|
+|UseCache|省略可。キャッシュを使う場合はTrue、使わない場合はFalseを指定います。省略時の規定値はTrueです。GetLocalPath関数はレジストリからOneDriveのマウント情報を読み込みキャッシュ（Static変数）に保存します。2回目以降のGetLocalPath関数呼び出し時にのキャッシュを使うことで処理を高速にしています。キャッシュはVBAマクロのExcelブックを閉じるまで有効です。前回のキャッシュ読み込みから30秒経過した場合は、UseCacheの指定にかかわらず、再度レジストリを読み込みキャッシュを更新します。|
+
+#### 例
+```
+Dim localPath As String
+localPath = GetLocalPath(ThisWorkbook.Path)
+```
+
 
 ## 既知の問題
   
