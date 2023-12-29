@@ -8,28 +8,29 @@ OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返�
   
 この問題の解決にはいくつかの方法が提案されています。個人用OneDriveであればURLパスを文字列処理してローカルパスに変換する方法があります。
 個人用OneDriveの場合、Workbook.Path プロパティが返すURLは次の形式となります。\<CID>は個人用に割り当てられた16桁の番号で、その後にOneDrive配下のフォルダのパス\<FOLDER-PATH>が続きます。  
-  
-    https://d.docs.live.net/<CID>/<FOLDER-PATH>
-  
+```  
+https://d.docs.live.net/<CID>/<FOLDER-PATH>
+```  
 この時、OneDriveのローカルパスは次のように変換できます。  
-  
-    C:\Users\<USER-NAME>\OneDrive\<FOLDER-PATH>
-    
+```  
+C:\Users\<USER-NAME>\OneDrive\<FOLDER-PATH>
+```    
 個人用OneDriveの場合、ローカルパスへの変換は比較的容易です。しかし、OneDrive for Business においては、このURLパスが複雑になります。以下はその典型例です。  
-
-    https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
-    
-    https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
-  
+```
+https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
+```
+```    
+https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
+```  
 エクスプローラーを使ってSharePointやTeamsのファイルにアクセスする場合、「同期」と「OneDriveへのショートカットの追加」の二つの方法があります。生成されるローカルパスは次のとおりです。 
   
 「同期」の場合：  
 ```
-    C:\Users\<USER-NAME>\<テナント名>\<フォルダーパス>
+C:\Users\<USER-NAME>\<テナント名>\<フォルダーパス>
 ```  
 「OneDriveへのショートカットの追加」の場合：  
 ```
-    C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダーパス>
+C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダーパス>
 ```
   
 「同期」と「OneDriveへのショートカットの追加」ではローカルパスの表記が微妙に異なります。また、ロカールパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>は
