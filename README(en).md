@@ -4,7 +4,7 @@ Last Updated: December 29, 2023
 
 ## Problem to be solved  
   
-There is a problem with the Workbook.Path property returning a URL when I run Excel VBA on OneDrive. It is not possible to get the local path of that book, and the URL is inconvenient, as the Dir function causes a runtime error and FileSystemObject cannot be used.  
+There is a problem with the Workbook.Path property returning a URL pass when I run Excel VBA on OneDrive. It is not possible to get the local path of that book, and the URL pass is inconvenient, as the Dir function causes a runtime error and FileSystemObject cannot be used.  
   
 Several methods have been proposed to solve this problem. For personal OneDrive, there is a way to convert the URL path to a local path by processing the URL path as a string.
 For a personal OneDrive, the URL returned by the Workbook.Path property will be in the following format \<The <CID> is a 16-digit number assigned for personal use, followed by the path to the folder under the OneDrive, <FOLDER-PATH>.  
