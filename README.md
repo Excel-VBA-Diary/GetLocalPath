@@ -1,6 +1,6 @@
 # GetLocalPath
 # OneDrive上のExcel VBAでWorkbook.Pathプロパティが返すURLをローカルパスに変換する。  
-#### README(en).md for English version    
+README(en).md for English version    
 最終更新日：2023年12月29日
 
 ## 解決したい問題  
@@ -45,10 +45,12 @@ OneDriveのマウント情報は次のレジストキー配下にあります。
 ```
 \HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive
 ```
-このレジストリーキーの配下にはOneDriveにマウントされているエントリー（サブキー）が登録されています。レジストリーエディターで見ると下図のような階層構造になっています。
+このレジストリーキーの配下にはOneDriveにマウントされているエントリー（サブキー）が登録されています。レジストリーエディターで見ると下図のような階層構造になっています。  
+  
 ![OneDrive-Registory-1](OneDrive-Registry-1.png)  
   
-それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。
+それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。  
+
 ![OneDrive-Registory-1](OneDrive-Registry-2.png) 
   
 UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、MountPointはOneDrive配下のローカルパスを示しています。Workbook.Pathが返すURLパスの上位部分と一致するUrlNameSpaceがあれば、そのUrlNameSpaceに対応するMountPointがわかります。
