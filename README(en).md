@@ -57,15 +57,15 @@ UrlNameSpace is the URL path to the SharePoint document library, and MountPoint 
   
 For example, assume the following case. 
 ```
-UrlNameSpace ： https://xxxx.sharepoint.com/sites/Test/Shared Documents/  
-MountPoint   ： c:\Users\diary\OneDrive - MyCompany\General - Work  
-Workbook.Path： https://xxxx.sharepoint.com/sites/Test/Shared Documents/General/folder1 
+UrlNameSpace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/  
+MountPoint   ： c:\Users\diary\OneDrive - MyCompany\General - TestSite1  
+Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/folder1 
 ```
 Since the UrlNameSpace matches the upper portion of the URL path returned by the Workbook.Path property, we can determine that the Workbook exists in or under the local path of MountPoint.
-From the structure and notational relationship of the document library on the SharePoint site, we know that /General in the URL path returned by the Workbook.Path property corresponds to MountPoint's \General - Work. 
+From the structure and notational relationship of the document library on the SharePoint site, we know that /General in the URL path returned by the Workbook.Path property corresponds to MountPoint's \General - TestSite1. 
 Based on these, the URL path returned by Workbook.Path can be converted to the following local path
 ```
-c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
+c:\Users\diary\OneDrive - MyCompany\General - TestSite1\folder1
 ```
   
 ## GetLocalPath Function
