@@ -38,7 +38,14 @@ URLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ここ
   
 ## 提案する解決策 
 
-# 
+# OneDriveのマウント情報
+  
+OneDriveのマウント情報は次のレジストキー配下にあります。
+```
+\HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive
+```
+このレジストリーキーの配下にはOneDriveにマウントされている数だけのサブキー（エントリー）があり、それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。
+UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、MountPointはOneDrive配下のフォルダーパスを示しています。Workbook.Pathが返すURLパスの上位部分と一致するUrlNameSpaceがあれば、そのUrlNameSpaceに対応するMountPointがわかります。
 
 ## 既知の問題
   
