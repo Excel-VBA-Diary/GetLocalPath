@@ -66,11 +66,12 @@ SharePoint サイトのドキュメントライブラリの構造と表記の関
 ```
 c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
 ```
-### GetLocalPath 関数
+## GetLocalPath 関数
 
 OneDriveのマウント情報を使ってURLパスをローカルパスに変換する関数が「GetLocalPath関数」です。
 Module_GetLocalPath.bas はVBAモジュールをエクスポートしたもので、この中にGet「LocalPath関数」が含まれています。Module_GetLocalPath.basをそのままインポートするか必要な部分をコピペしてお使いください。
-#### 構文
+  
+### 構文
 GetLocalPath(UrlPath, [UseCache])  
 
 |引き数|説明|
@@ -78,15 +79,13 @@ GetLocalPath(UrlPath, [UseCache])
 |UrlPath|必須。Workbook.Pathが返すURLパスを指定します。|
 |UseCache|省略可。キャッシュを使う場合はTrue、使わない場合はFalseを指定います。省略時の規定値はTrueです。GetLocalPath関数はレジストリからOneDriveのマウント情報を読み込みキャッシュ（Static変数）に保存します。2回目以降のGetLocalPath関数呼び出し時にのキャッシュを使うことで処理を高速にしています。キャッシュはVBAマクロのExcelブックを閉じるまで有効です。前回のキャッシュ読み込みから30秒経過した場合は、UseCacheの指定にかかわらず、再度レジストリを読み込みキャッシュを更新します。|
 
-#### 例
+### 例
 ```
 Dim localPath As String
 localPath = GetLocalPath(ThisWorkbook.Path)
 ```
 
-
 ## 既知の問題
   
-マウントポイント（MountPoint）は、SharePointサイトのフルパスではなくフィルダー名だけなので、マウントしたフォルダーが上位フォルダーと同一名の場合、誤って認識する場合があります。  
-
-
+MountPointで示されるローカルパスには、SharePointサイトのドキュメントライブラリー配下にあるフィルダー名だけの情報しかありません。ドキュメントライブラリーのルートからのフルパスを示していませんので、例えば、当該フォルダー名が上位フォルダーと同一名の場合、上位フォルダーを当該フォルダーだと誤って認識する場合があります。この事象は当該フォルダーと同じ名前のフォルダーが下位にある場合は起きません。この事象を回避するための方法は現在調査中です。
+  
