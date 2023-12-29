@@ -44,13 +44,10 @@ Public Function GetLocalPath(UrlPath As String, _
     'キャッシュがない場合、キャッシュ収集から30秒を超えた場合は、キャッシュを更新する
     'If no cache or more than 30 seconds since last update, the cache is updated
     
-    If UseCache = False Or mpiCache Is Nothing Or Now - lastUpdated > 30 / 86400 Then
-        GoTo Update_Cache
-    Else
+    If Not (UseCache = False Or mpiCache Is Nothing Or Now - lastUpdated > 30 / 86400) Then
         GoTo Already_Updated
     End If
     
-Update_Cache:
     
     Set mpiCache = New Collection
     
@@ -233,12 +230,12 @@ Private Sub Speed_Test_GetLocalPath()
     For i = 1 To 100
         Call GetLocalPath(ThisWorkbook.Path, False)     'Cache Disable
     Next
-    Debug.Print "UseCache Disable: "; Format(Timer - t1, "#0.0000000"); "[Sec]"
+    Debug.Print "UseCache Disable: "; Format(Timer - t1, "#0.0000000"); " [Sec]"
     t1 = Timer
     For i = 1 To 100
         Call GetLocalPath(ThisWorkbook.Path, True)      'Cache Enable
     Next
-    Debug.Print "UseCache Enable:  "; Format(Timer - t1, "#0.0000000"); "[Sec]"
+    Debug.Print "UseCache Enable:  "; Format(Timer - t1, "#0.0000000"); " [Sec]"
 End Sub
 
 '-------------------------------------------------------------------------------
