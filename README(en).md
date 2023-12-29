@@ -4,27 +4,37 @@ Last Updated: December 29, 2023
 
 ## Problem to be solved  
   
-There is a problem with the Workbook.Path property returning a URL when Excel VBA runs on OneDrive. This makes it impossible to get the local path for that book and even FileSystemObject is not available.     
+There is a problem with the Workbook.Path property returning a URL when I run Excel VBA on OneDrive. It is not possible to get the local path of that book, and the URL is inconvenient, as the Dir function causes a runtime error and FileSystemObject cannot be used.  
   
 Several methods have been proposed to solve this problem. For personal OneDrive, there is a way to convert the URL path to a local path by processing the URL path as a string.
-For a personal OneDrive, the URL path returned by the Workbook.Path property has the following form. \<CID> is the 16-digit number assigned to the individual, followed by the subfolder path \<FOLDER-PATH>..  
+For a personal OneDrive, the URL returned by the Workbook.Path property will be in the following format \<The <CID> is a 16-digit number assigned for personal use, followed by the path to the folder under the OneDrive, <FOLDER-PATH>.  
 ```  
 https://d.docs.live.net/<CID>/<FOLDER-PATH>
 ```  
-At this time, the OneDrive local path can be converted as follows:    
+At this time, the OneDrive local path can be converted as follows:  
 ```  
 C:\Users\<USER-NAME>\OneDrive\<FOLDER-PATH>
 ```    
-In OneDrive for Business, however, this URL path can be complicated. Here is an example:  
+For personal OneDrive, the conversion to a local path is relatively easy. In OneDrive for Business, however, this URL path becomes more complex. Here is a typical example: 
 ```
-https://<TENANT>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
+https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
 ```
 ```    
-https://<TENANT>-my.sharepoint.com/personal/<USER-PRINCIPAL-NAME>/Documents/<FOLDER-PATH>
+https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
 ```  
-The URL paths listed here are only an example, and it is not easy to convert them to local paths using only string conversion. For example, the \<TENANT> in the URL path is not the same as the \<tenant name> in the locale path, so it cannot be used as is. Also, in SharePoint and Teams, you can add folders or shortcuts to OneDrive via "Sync" or "Add Shortcut to OneDrive", but if you have many of these folders or shortcuts, it is difficult to determine which URL path corresponds to which shortcut.   
+There are two ways to access SharePoint and Teams files using Explorer: "Sync" and "Add Shortcut to OneDrive". The local paths that are generated are as follows   
+
+For Sync:  
+```
+C:\Users\<USER-NAME>\<TENANT-NAME>\<FOLDER-PATH>
+```  
+For "Add shortcut to OneDrive:  
+```
+C:\Users\<USER-NAME>\OneDrive - <TENANT-NAME>\<FOLDER-PATH>
+```
   
-For this reason, the URL path returned by the Workbook.Path property may not be converted to a local path using only string processing.  
+The local paths in "Sync" and "Add shortcut to OneDrive" are slightly different. Also, the <tenant-name> in the local path is different from the ″<tenant-name> in the URL path. Furthermore, <folder-path> included in the locale path is different from not necessarily the same as the\<FOLDER-PATH> contained in the URL path. Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.    
+  
   
 ## Proposed Solution  
 
