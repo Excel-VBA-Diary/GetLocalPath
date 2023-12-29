@@ -44,9 +44,25 @@ OneDriveのマウント情報は次のレジストキー配下にあります。
 ```
 \HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive
 ```
+このレジストリーキーの配下にはOneDriveにマウントされているエントリー（サブキー）が登録されています。レジストリーエディターで見ると下図のような階層構造になっています。
 ![OneDrive-Registory-1](OneDrive-Registry-1.png)  
-このレジストリーキーの配下にはOneDriveにマウントされている数だけのサブキー（エントリー）があり、それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。
-UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、MountPointはOneDrive配下のフォルダーパスを示しています。Workbook.Pathが返すURLパスの上位部分と一致するUrlNameSpaceがあれば、そのUrlNameSpaceに対応するMountPointがわかります。
+  
+それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。
+![OneDrive-Registory-1](OneDrive-Registry-2.png) 
+  
+UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、MountPointはOneDrive配下のローカルパスを示しています。Workbook.Pathが返すURLパスの上位部分と一致するUrlNameSpaceがあれば、そのUrlNameSpaceに対応するMountPointがわかります。
+例えば、次のようなケースを想定します。
+```
+UrlNameSpace ： https://xxxx.sharepoint.com/sites/Test/Shared Documents/  
+MountPoint   ： c:\Users\diary\OneDrive - MyCompany\`#0024FF`General - Work`#000000  
+Workbook.Path： https://xxxx.sharepoint.com/sites/Test/Shared Documents/General/folder1 
+```
+Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
+SharePoint サイトのドキュメントライブラリの構造から、Workbook.Pathプロパティが返すURLパスのうち /General は MountPoint の \General - Work に相当します。 
+これらの関係から Workbook.Pathが返すURLパスはを次のローカルパスに変換できます。
+```
+c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
+```
 
 ## 既知の問題
   
