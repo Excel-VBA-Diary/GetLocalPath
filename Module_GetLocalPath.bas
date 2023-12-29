@@ -38,16 +38,21 @@ Public Function GetLocalPath(UrlPath As String, _
     'Collect all OneDrive mount point information
     'For speed, mpiCache collection is a Static variable
     
-    Static mpiCache As Collection
+    Static mpiCache As Collection, lastUpdated As Date
     Dim mpi As Dictionary
     
-    If UseCache And (Not mpiCache Is Nothing) Then GoTo Already_Collected
+    'キャッシュがない場合、キャッシュ収集から30秒を超えた場合は、キャッシュを更新する
+    'If no cache or more than 30 seconds since last update, the cache is updated
+    
+    If UseCache And _
+       Not mpiCache Is Nothing And _
+       Now - lastUpdated <= 30 / 86400 Then GoTo Already_Collected
     
     Set mpiCache = New Collection
     
     Const HKEY_CURRENT_USER = &H80000001
     Const S_HKEY_CURRENT_USER = "HKEY_CURRENT_USER\"
-    Const TARGETKEY = "Software\SyncEngines\Providers\OneDrive"
+    Const TARGETKEY = "SOFTWARE\SyncEngines\Providers\OneDrive"
     
     Dim objReg As Object
     Set objReg = CreateObject("WbemScripting.SWbemLocator"). _
@@ -79,6 +84,8 @@ Public Function GetLocalPath(UrlPath As String, _
             Set mpi = Nothing
         End If
     Next
+    
+    lastUpdated = Now
     
 Already_Collected:
     
