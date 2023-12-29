@@ -24,16 +24,16 @@ https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
 ```  
 There are two ways to access SharePoint and Teams files using Explorer: "Sync" and "Add Shortcut to OneDrive". The local paths that are generated are as follows   
 
-For Sync:  
+For "Sync":  
 ```
 C:\Users\<USER-NAME>\<TENANT-NAME>\<FOLDER-PATH>
 ```  
-For "Add shortcut to OneDrive:  
+For "Add Shortcut to OneDrive":  
 ```
 C:\Users\<USER-NAME>\OneDrive - <TENANT-NAME>\<FOLDER-PATH>
 ```
   
-The local paths in "Sync" and "Add shortcut to OneDrive" are slightly different. Also, the <tenant-name> in the local path is different from the ″<tenant-name> in the URL path. Furthermore, <folder-path> included in the locale path is different from not necessarily the same as the\<FOLDER-PATH> contained in the URL path. Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.    
+The local paths in "Sync" and "Add Shortcut to OneDrive" are slightly different. Also, the <tenant-name> in the local path is different from the ″<tenant-name> in the URL path. Furthermore, <folder-path> included in the locale path is different from not necessarily the same as the\<FOLDER-PATH> contained in the URL path. Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.    
   
   
 ## Proposed Solution  
