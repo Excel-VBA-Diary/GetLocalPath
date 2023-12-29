@@ -8,7 +8,7 @@ README(en).md for English version
 OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返す問題が起きます。そのブックのローカルパスを取得できず、URLのままではDir関数が実行時エラーになったり、FileSystemObjectが使えなくなるなど不便な状態になります。  
   
 この問題の解決にはいくつかの方法が提案されています。個人用OneDriveであればURLパスを文字列処理してローカルパスに変換する方法があります。
-個人用OneDriveの場合、Workbook.Path プロパティが返すURLは次の形式となります。\<CID>は個人用に割り当てられた16桁の番号で、その後にOneDrive配下のフォルダのパス\<FOLDER-PATH>が続きます。  
+個人用OneDriveの場合、Workbook.Path プロパティが返すURLは次の形式となります。\<CID>は個人用に割り当てられた16桁の番号で、その後にOneDrive配下のフォルダーのパス\<FOLDER-PATH>が続きます。  
 ```  
 https://d.docs.live.net/<CID>/<FOLDER-PATH>
 ```  
@@ -34,7 +34,7 @@ C:\Users\<USER-NAME>\<テナント名>\<フォルダーパス>
 C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダーパス>
 ```
   
-「同期」と「OneDriveへのショートカットの追加」ではローカルパスの表記が微妙に異なります。また、ロカールパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>は
+「同期」と「OneDriveへのショートカットの追加」ではローカルパスの表記が微妙に異なります。また、ローカルパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>は
 URLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ここに挙げたURLパスもローカルパスも一例に過ぎず、文字列変換だけでURLパスをローカルパスに変換するのは事実上無理です。  
   
 ## 提案する解決策 
@@ -62,7 +62,7 @@ Workbook.Path： https://xxxx.sharepoint.com/sites/Test/Shared Documents/General
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
 SharePoint サイトのドキュメントライブラリの構造と表記の関係から、Workbook.Pathプロパティが返すURLパスのうち /General は MountPoint の \General - Work に相当ことがわかります。 
-これらのことを踏まえ、Workbook.Pathが返すURLパスはを次のローカルパスに変換できます。
+これらのことを踏まえ、Workbook.Pathが返すURLパスは次のローカルパスに変換できます。
 ```
 c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
 ```
