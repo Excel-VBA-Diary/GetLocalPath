@@ -6,8 +6,7 @@ Last Updated: December 29, 2023
   
 There is a problem with the Workbook.Path property returning a URL pass when I run Excel VBA on OneDrive. It is not possible to get the local path of that book, and the URL pass is inconvenient, as the Dir function causes a runtime error and FileSystemObject cannot be used.  
   
-Several methods have been proposed to solve this problem. For personal OneDrive, there is a way to convert the URL path to a local path by processing the URL path as a string.
-For a personal OneDrive, the URL returned by the Workbook.Path property will be in the following format \<The <CID> is a 16-digit number assigned for personal use, followed by the path to the folder under the OneDrive, <FOLDER-PATH>.  
+Several methods have been proposed to solve this problem. For a personal OneDrive, there is a way to convert the URL path to a local path by processing the URL path as a string. For a personal OneDrive, the URL returned by the Workbook.Path property would be in the following format \<CID> is the 16-digit number assigned to the individual, followed by the path \<FOLDER-PATH> of the folder under the OneDrive.
 ```  
 https://d.docs.live.net/<CID>/<FOLDER-PATH>
 ```  
@@ -33,7 +32,7 @@ For "Add Shortcut to OneDrive":
 C:\Users\<USER-NAME>\OneDrive - <TENANT-NAME>\<FOLDER-PATH>
 ```
   
-The local paths in "Sync" and "Add Shortcut to OneDrive" are slightly different. Also, the <tenant-name> in the local path is different from the ″<tenant-name> in the URL path. Furthermore, <folder-path> included in the locale path is different from not necessarily the same as the\<FOLDER-PATH> contained in the URL path. Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.    
+The local paths in "Sync" and "Add Shortcut to OneDrive" are slightly different. Also, the \<tenant-name> in the local path is different from the ″<tenant-name> in the URL path. Furthermore, \<folder-path> included in the locale path is different from not necessarily the same as the \<FOLDER-PATH> contained in the URL path. Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.    
   
   
 ## Proposed Solution  
