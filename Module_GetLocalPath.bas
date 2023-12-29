@@ -20,8 +20,8 @@ Option Explicit
 '   lp = GetLocalPath(ThisWorkbook.Path)
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
-' Created: December 26, 2023
-' Last Updated: December 26, 2023
+' Created: December 29, 2023
+' Last Updated: December 29, 2023
 ' Version: 1.0
 ' License: MIT
 '-------------------------------------------------------------------------------
@@ -44,9 +44,13 @@ Public Function GetLocalPath(UrlPath As String, _
     'キャッシュがない場合、キャッシュ収集から30秒を超えた場合は、キャッシュを更新する
     'If no cache or more than 30 seconds since last update, the cache is updated
     
-    If UseCache And _
-       Not mpiCache Is Nothing And _
-       Now - lastUpdated <= 30 / 86400 Then GoTo Already_Collected
+    If UseCache = False Or mpiCache Is Nothing Or Now - lastUpdated > 30 / 86400 Then
+        GoTo Update_Cache
+    Else
+        GoTo Already_Updated
+    End If
+    
+Update_Cache:
     
     Set mpiCache = New Collection
     
@@ -87,7 +91,7 @@ Public Function GetLocalPath(UrlPath As String, _
     
     lastUpdated = Now
     
-Already_Collected:
+Already_Updated:
     
     '有効なOneDriveマウント情報が無ければ終了する
     'Exit if no valid OneDrive mount information
