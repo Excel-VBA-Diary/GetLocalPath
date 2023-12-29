@@ -24,8 +24,9 @@ OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLを返�
 エクスプローラーを使ってSharePointやTeamsのファイルにアクセスする場合、「同期」と「OneDriveへのショートカットの追加」の二つの方法があります。生成されるローカルパスは次のとおりです。 
   
 「同期」の場合：  
+```
     C:\Users\<USER-NAME>\<テナント名>\<フォルダーパス>
-  
+```  
 「OneDriveへのショートカットの追加」の場合：  
     C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダーパス>
   
