@@ -78,7 +78,7 @@ GetLocalPath returns a local path.
 ```
 Dim localPath As String
 localPath = GetLocalPath(ThisWorkbook.Path) 
-'''
+```
   
 ## Known Issue
   
