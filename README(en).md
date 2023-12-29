@@ -31,3 +31,5 @@ For this reason, the URL path returned by the Workbook.Path property may not be 
 
 ## Known Issue
   
+The local path shown by MountPoint contains only the name of a target folder under the document library on the SharePoint site. For example, if the name of a target folder is the same as that of an upper-level folder, the upper-level folder may be mistakenly identified as the target folder. This issue will not happen if there is a subordinate folder with the same name as the target folder. Now investigating a workaround for this issue.
+  
