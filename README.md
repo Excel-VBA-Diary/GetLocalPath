@@ -44,6 +44,7 @@ OneDriveのマウント情報は次のレジストキー配下にあります。
 ```
 \HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive
 ```
+![OneDrive-Registory-1](OneDrive-Registry-1.png)  
 このレジストリーキーの配下にはOneDriveにマウントされている数だけのサブキー（エントリー）があり、それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。
 UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、MountPointはOneDrive配下のフォルダーパスを示しています。Workbook.Pathが返すURLパスの上位部分と一致するUrlNameSpaceがあれば、そのUrlNameSpaceに対応するMountPointがわかります。
 
