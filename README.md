@@ -54,6 +54,9 @@ OneDriveのマウント情報は次のレジストキー配下にあります。
 ![OneDrive-Registory-1](OneDrive-Registry-2.png) 
   
 UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、MountPointはOneDrive配下のローカルパスを示しています。Workbook.Pathが返すURLパスの上位部分と一致するUrlNameSpaceがあれば、そのUrlNameSpaceに対応するMountPointがわかります。
+ 
+### 変換メカニズムの概略 
+ 
 例えば、次のようなケースを想定します。
 ```
 UrlNameSpace ： https://xxxx.sharepoint.com/sites/Test/Shared Documents/  
@@ -66,6 +69,7 @@ SharePoint サイトのドキュメントライブラリの構造と表記の関
 ```
 c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
 ```
+  
 ## GetLocalPath 関数
 
 OneDriveのマウント情報を使ってURLパスをローカルパスに変換する関数が「GetLocalPath関数」です。
@@ -80,6 +84,10 @@ GetLocalPath(UrlPath, [UseCache])
 |UrlPath|必須。Workbook.Pathが返すURLパスを指定します。|
 |UseCache|省略可。キャッシュを使う場合はTrue、使わない場合はFalseを指定します。省略時の規定値はTrueです。GetLocalPath関数はレジストリからOneDriveのマウント情報を読み込みキャッシュ（Static変数）に保存します。2回目以降のGetLocalPath関数呼び出し時に、このキャッシュを使うことで処理を高速化しています。キャッシュはVBAマクロのExcelブックを閉じるまで有効です。UseCacheの指定にかかわらず、前回のキャッシュ読み込みから30秒経過した場合は再度レジストリを読み込みキャッシュを更新します。|
 
+### 戻り値
+
+GetLocalPath関数はローカルパスを文字列で返します。
+  
 ### 例
 ```
 Dim localPath As String
