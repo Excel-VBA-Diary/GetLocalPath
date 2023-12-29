@@ -69,6 +69,7 @@ c:\Users\diary\OneDrive - MyCompany\General - Work\folder1
 ## GetLocalPath 関数
 
 OneDriveのマウント情報を使ってURLパスをローカルパスに変換する関数が「GetLocalPath関数」です。
+引き数がローカルパスの場合は、変換せずにローカルパスをそのまま返しますので、例えば、コードの中の ThisWorkbook.Path を GetLocalPath(ThisWorkbook.Path) に置き換えて汎用的に使えます。
 Module_GetLocalPath.bas はVBAモジュールをエクスポートしたもので、この中にGet「LocalPath関数」が含まれています。Module_GetLocalPath.basをそのままインポートするか必要な部分をコピペしてお使いください。
   
 ### 構文
