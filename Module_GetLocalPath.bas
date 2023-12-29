@@ -36,6 +36,7 @@ Public Function GetLocalPath(UrlPath As String, _
    
     'すべてのOneDriveマウントポイント情報を収集する
     'Collect all OneDrive mount point information
+    'For speed, mpiCache collection is a Static variable
     
     Static mpiCache As Collection
     Dim mpi As Dictionary
@@ -46,7 +47,7 @@ Public Function GetLocalPath(UrlPath As String, _
     
     Const HKEY_CURRENT_USER = &H80000001
     Const S_HKEY_CURRENT_USER = "HKEY_CURRENT_USER\"
-    Const TARGETKEY = "SOFTWARE\SyncEngines\Providers\OneDrive"
+    Const TARGETKEY = "Software\SyncEngines\Providers\OneDrive"
     
     Dim objReg As Object
     Set objReg = CreateObject("WbemScripting.SWbemLocator"). _
@@ -64,7 +65,7 @@ Public Function GetLocalPath(UrlPath As String, _
     
     For Each subKey In subKeySet
         'すべてのエントリー名とその値を取得する
-        'Get all entry names and their values
+        'collect all entry names and their values
         objReg.EnumValues HKEY_CURRENT_USER, TARGETKEY & "\" & subKey, entryNameSet
         If Not IsNull(entryNameSet) Then
             Set mpi = New Dictionary
@@ -81,14 +82,12 @@ Public Function GetLocalPath(UrlPath As String, _
     
 Already_Collected:
     
-    '有効なOneDriveマウントポイント情報が無ければ終了する
-    'Exit if no valid OneDrive mount point information
+    '有効なOneDriveマウント情報が無ければ終了する
+    'Exit if no valid OneDrive mount information
     If mpiCache.Count = 0 Then Exit Function
    
     Dim strUrlNamespace As String, strMountPoint As String
-    Dim strLibraryType As String, isFolderScope As Boolean
     Dim tmpLocalPath As String, tmpSubPath As String
-    Dim returnDir As String, errNum As Long
     
     '個人用OneDriveのURLパスをローカルパスに変換する
     'Convert personal OneDrive URL path to local path
@@ -110,10 +109,13 @@ Already_Collected:
         Exit Function
     End If
     
-    '個人用OneDrive以外のURLパスをローカルパスに変換する
-    'Convert non-personal OneDrive URL path to local path
+    '会社用OneDriveのURLパスをローカルパスに変換する
+    'Convert Company OneDrive URL path to local path
     
-    Dim pathTree As Variant, i As Long
+    Dim strLibraryType As String, isFolderScope As Boolean
+    Dim mountFolderName As String
+    Dim returnDir As String, errNum As Long
+    Dim tmpArray As Variant, i As Long
     
     For Each mpi In mpiCache
         strUrlNamespace = mpi.Item("UrlNamespace")
@@ -145,15 +147,29 @@ Already_Collected:
             If isFolderScope Then
                 If tmpSubPath Like "\General*" Then tmpSubPath = Mid(tmpSubPath, 9)
             End If
-            pathTree = Split(strMountPoint, "\")
-            If UBound(pathTree) = 4 Then
-                i = InStr(1, tmpSubPath, "\" & pathTree(4))
+
+            tmpArray = Split(strMountPoint, "\")
+            If UBound(tmpArray) = 4 Then
+                mountFolderName = tmpArray(4)
+                
+                'SharePointフォルダー（ビルアイコン）の場合、同期したフォルダ名を抽出する
+                'In case of SharePoint folder (building icon), extract synchronized folder name
+                
+                If Not (strMountPoint Like Environ("OneDriveCommercial") & "*") Then
+                    tmpArray = Split(mountFolderName, " - ")
+                    If UBound(tmpArray) = 1 Then mountFolderName = tmpArray(1)
+                End If
+            
+                'マウントフォルダーをサーチする
+                'Search mounted folder
+                
+                i = InStr(1, tmpSubPath, "\" & mountFolderName)
                 If i = 0 Then
                     tmpLocalPath = strMountPoint & tmpSubPath
                     GoTo Verify_Folder_Exists
                 End If
                 Do
-                    tmpSubPath = Mid(tmpSubPath, i + Len(pathTree(4)) + 1)
+                    tmpSubPath = Mid(tmpSubPath, i + Len(mountFolderName) + 1)
                     tmpLocalPath = strMountPoint & tmpSubPath
                     On Error Resume Next
                     returnDir = Dir(tmpLocalPath, vbDirectory)
@@ -163,7 +179,7 @@ Already_Collected:
                         GetLocalPath = tmpLocalPath
                         Exit Function
                     End If
-                    i = InStr(i, tmpSubPath, "\" & pathTree(4))
+                    i = InStr(i, tmpSubPath, "\" & mountFolderName)
                 Loop While i > 0
             Else
                 tmpLocalPath = strMountPoint & tmpSubPath
@@ -195,23 +211,23 @@ End Function
 ' Test code for GetLocalPath
 '-------------------------------------------------------------------------------
 
-Private Sub Test_GetLocalPath_Function()
+Private Sub Functional_Test_GetLocalPath()
     Debug.Print "URL Path", ThisWorkbook.Path
     Debug.Print "Local Path", GetLocalPath(ThisWorkbook.Path)
 End Sub
 
-Private Sub Test_GetLocalPath_Speed()
+Private Sub Speed_Test_GetLocalPath()
     Dim i As Long, t1 As Single
     t1 = Timer
     For i = 1 To 100
-        Call GetLocalPath(ThisWorkbook.Path, False)
+        Call GetLocalPath(ThisWorkbook.Path, False)     'Cache Disable
     Next
-    Debug.Print "UseCache Disable:"; Timer - t1; "[Sec]"
+    Debug.Print "UseCache Disable: "; Format(Timer - t1, "#0.0000000"); "[Sec]"
     t1 = Timer
     For i = 1 To 100
-        Call GetLocalPath(ThisWorkbook.Path, True)
+        Call GetLocalPath(ThisWorkbook.Path, True)      'Cache Enable
     Next
-    Debug.Print "UseCache Enable: "; Timer - t1; "[Sec]"
+    Debug.Print "UseCache Enable:  "; Format(Timer - t1, "#0.0000000"); "[Sec]"
 End Sub
 
 '-------------------------------------------------------------------------------
