@@ -94,10 +94,10 @@ Dim localPath As String
 localPath = GetLocalPath(ThisWorkbook.Path)
 ```
 ### Module_GetLocalPath.bas バージョン
-Created: December 29, 2023
-Last Updated: December 30, 2023
-Version: 1.001
-
+Created: December 29, 2023  
+Last Updated: December 30, 2023  
+Version: 1.001  
+  
 ## 既知の問題
   
 MountPointで示されるローカルパスには、SharePointサイトのドキュメントライブラリー配下にあるフィルダー名だけの情報しかありません。ドキュメントライブラリーのルートからのフルパスを示していませんので、例えば、当該フォルダー名が上位フォルダーと同一名の場合、上位フォルダーを当該フォルダーだと誤って認識する場合があります。この事象は当該フォルダーと同じ名前のフォルダーが下位にある場合は起きません。この事象を回避するための方法は現在調査中です。
