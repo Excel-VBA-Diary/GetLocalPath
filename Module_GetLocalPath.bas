@@ -20,9 +20,9 @@ Option Explicit
 '   lp = GetLocalPath(ThisWorkbook.Path)
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
-' Created: December 29, 2023
-' Last Updated: December 29, 2023
-' Version: 1.0
+' Created: December 30, 2023
+' Last Updated: December 30, 2023
+' Version: 1.001
 ' License: MIT
 '-------------------------------------------------------------------------------
 
@@ -152,20 +152,23 @@ Already_Updated:
                 tmpLocalPath = strMountPoint
                 GoTo Verify_Folder_Exists
             End If
-            If isFolderScope Then
-                If tmpSubPath Like "\General*" Then tmpSubPath = Mid(tmpSubPath, 9)
-            End If
 
             tmpArray = Split(strMountPoint, "\")
             If UBound(tmpArray) = 4 Then
+                
+                '同期したフォルダ名を抽出する
+                'Eextract synchronized folder name
+                
                 mountFolderName = tmpArray(4)
-                
-                'SharePointフォルダー（ビルアイコン）の場合、同期したフォルダ名を抽出する
-                'In case of SharePoint folder (building icon), extract synchronized folder name
-                
-                If Not (strMountPoint Like Environ("OneDriveCommercial") & "*") Then
-                    tmpArray = Split(mountFolderName, " - ")
-                    If UBound(tmpArray) = 1 Then mountFolderName = tmpArray(1)
+                tmpArray = Split(mountFolderName, " - ")
+                If UBound(tmpArray) = 1 Then
+                    If strMountPoint Like Environ("OneDriveCommercial") & "*" Then
+                        'OneDrive for Business (Cloud Icon)
+                        mountFolderName = tmpArray(0)
+                    Else
+                        'SharePoint folser (Building Icon)
+                        mountFolderName = tmpArray(1)
+                    End If
                 End If
             
                 'マウントフォルダーをサーチする
