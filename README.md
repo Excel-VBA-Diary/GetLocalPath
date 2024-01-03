@@ -23,7 +23,8 @@ https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-
 ```
 ```    
 https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
-```  
+```
+ここで\<UPN>はユーザー プリンシパル名 \(User Principal Name) のことで、通常、ユーザーアカウント名 \<USER-ACCOUNT>と\<TENANT-NAME>で構成されたもの \(<USER-ACCOUNT>_<TENANT-NAME>_onmicrosoft_com) になります。  
 SharePointやTeamsのドキュメントライブラリーにアクセスするとコマンドバーに「同期」と「OneDriveへのショートカットの追加」のメニューが表示されます。  
 ![OneDrive-Registory-1](OneDrive-Sync_vs_ShortCut-1.png)  
   
