@@ -2,7 +2,7 @@
 # OneDrive上のExcel VBAでWorkbook.Pathプロパティが返すURLパスをローカルパスに変換する。  
 README(en).md for English version    
 初回投稿日：2023年12月29日  
-最終更新日：2024年1月3日 15:20
+最終更新日：2024年1月3日 16:00
 
 ## 解決したい問題  
   
@@ -22,9 +22,8 @@ C:\Users\<USER-NAME>\OneDrive\<FOLDER-PATH>
 https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
 ```
 ```    
-https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
+https://<TENANT-NAME>-my.sharepoint.com/personal/<User-Principal-Name>/Documents/<FOLDER-PATH>
 ```
-ここで\<UPN>はユーザー プリンシパル名 \(User Principal Name) のことで、通常、ユーザーアカウント名 \<USER-ACCOUNT>と\<TENANT-NAME>で構成されたもの \(<USER-ACCOUNT>_<TENANT-NAME>_onmicrosoft_com) になります。  
 SharePointやTeamsのドキュメントライブラリーにアクセスするとコマンドバーに「同期」と「OneDriveへのショートカットの追加」のメニューが表示されます。  
 ![OneDrive-Registory-1](OneDrive-Sync_vs_ShortCut-1.png)  
   
