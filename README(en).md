@@ -20,7 +20,7 @@ For personal OneDrive, the conversion to a local path is relatively easy. In One
 https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-PATH>
 ```
 ```    
-https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
+https://<TENANT-NAME>-my.sharepoint.com/personal/<User-Principal-Name>/Documents/<FOLDER-PATH>
 ```  
 There are two ways to access SharePoint and Teams files using Explorer: "Sync" and "Add Shortcut to OneDrive". The local paths that are generated are as follows   
 
