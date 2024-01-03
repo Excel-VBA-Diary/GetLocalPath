@@ -24,7 +24,10 @@ https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-
 ```    
 https://<TENANT-NAME>-my.sharepoint.com/personal/<UPN>/Documents/<FOLDER-PATH>
 ```  
-エクスプローラーを使ってSharePointやTeamsのファイルにアクセスする場合、「同期」と「OneDriveへのショートカットの追加」の二つの方法があります。生成されるローカルパスは次のとおりです。 
+SharePointやTeamsのドキュメントライブラリーにアクセスするとコマンドバーに「同期」と「OneDriveへのショートカットの追加」のメニューが表示されます。  
+![OneDrive-Registory-1](OneDrive-Sync_vs_ShortCut-1.png)  
+  
+どちらもエクスプローラーを使ってSharePointやTeamsのファイルにアクセスできる点では同じですが、生成されるローカルパスは次のとおり微妙に異なります。 
   
 「同期」の場合：  
 ```
@@ -35,8 +38,7 @@ C:\Users\<USER-NAME>\<テナント名>\<フォルダーパス>
 C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダーパス>
 ```
   
-「同期」と「OneDriveへのショートカットの追加」ではローカルパスの表記が微妙に異なります。また、ローカルパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>は
-URLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ここに挙げたURLパスもローカルパスも一例に過ぎず、文字列変換だけでURLパスをローカルパスに変換するのは事実上無理です。  
+またた、どちらの場合も、ローカルパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>はURLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ロカールパスに含まれる<フォルダーパス>は「同期」または「OneDriveへのショートカットの追加」の対象となるフォルダを起点とする相対パスであるのに対して、URLパスに含まれる\<FOLDER-PATH>はドキュメントライブラリーのトップからの絶対パスになります。ここに挙げたURLパスもローカルパスも一例に過ぎず、文字列変換だけでURLパスをローカルパスに変換するのは事実上無理です。  
   
 ## 提案する解決策 
 
