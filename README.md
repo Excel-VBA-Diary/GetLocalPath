@@ -1,12 +1,12 @@
 # GetLocalPath
-# OneDrive上のExcel VBAでWorkbook.Pathプロパティが返すURLパスをローカルパスに変換する。  
+# OneDriveのExcel VBAでWorkbook.Pathプロパティが返すURLパスをローカルパスに変換する。  
 README(en).md for English version    
 初回投稿日：2023年12月29日  
 最終更新日：2024年1月3日 16:00
 
 ## 解決したい問題  
   
-OneDrive上のExcel VBAを動かすとWorkbook.Path プロパティがURLパスを返す問題が起きます。そのブックのローカルパスを取得できず、URLパスのままではDir関数が実行時エラーになったり、FileSystemObjectが使えなくなるなど不便な状態になります。  
+OneDriveでExcel VBAを動かすとWorkbook.Path プロパティがURLパスを返す問題が起きます。そのブックのローカルパスを取得できず、URLパスのままではDir関数が実行時エラーになったり、FileSystemObjectが使えなくなるなど不便な状態になります。  
   
 この問題の解決にはいくつかの方法が提案されています。個人用OneDriveであればURLパスを文字列処理してローカルパスに変換する方法があります。
 個人用OneDriveの場合、Workbook.Path プロパティが返すURLは次の形式となります。\<CID>は個人用に割り当てられた16桁の番号で、その後にOneDrive配下のフォルダーのパス\<FOLDER-PATH>が続きます。  
