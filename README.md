@@ -2,11 +2,11 @@
 # OneDriveのExcel VBAでWorkbook.Pathプロパティが返すURLパスをローカルパスに変換する。  
 README(en).md for English version    
 初回投稿日：2023年12月29日  
-最終更新日：2024年1月3日 16:00
+最終更新日：2024年1月8日
 
 ## 解決したい問題  
   
-OneDriveでExcel VBAを動かすとWorkbook.Path プロパティがURLパスを返す問題が起きます。そのブックのローカルパスを取得できず、URLパスのままではDir関数が実行時エラーになったり、FileSystemObjectが使えなくなるなど不便な状態になります。  
+OneDriveでExcel VBAを動かすとWorkbook.Path プロパティはローカルパスではなくURLパスを返すという問題が起きます。URLパスのままではDir関数が実行時エラーになったり、FileSystemObjectが使えなくなるなど不便な状態になります。  
   
 この問題の解決にはいくつかの方法が提案されています。個人用OneDriveであればURLパスを文字列処理してローカルパスに変換する方法があります。
 個人用OneDriveの場合、Workbook.Path プロパティが返すURLは次の形式となります。\<CID>は個人用に割り当てられた16桁の番号で、その後にOneDrive配下のフォルダーのパス\<FOLDER-PATH>が続きます。  
@@ -27,7 +27,10 @@ https://<TENANT-NAME>-my.sharepoint.com/personal/<User-Principal-Name>/Documents
 SharePointやTeamsのドキュメントライブラリーにアクセスするとコマンドバーに「同期」と「OneDriveへのショートカットの追加」のメニューが表示されます。  
 ![OneDrive-Registory-1](OneDrive-Sync_vs_ShortCut-1.png)  
   
-どちらもエクスプローラーを使ってSharePointやTeamsのファイルにアクセスできる点では同じですが、生成されるローカルパスは次のとおり微妙に異なります。 
+どちらもエクスプローラーを使ってSharePointやTeamsのファイルにアクセスできる点では同じですが、フォルダーの置き場所は異なります。「同期」は建物アイコンの下に、「OneDriveへのショートカットの追加」は雲アイコンの下に追加されます。 
+![OneDrive-Registory-1](OneDrive-Sync_vs_ShortCut_2.png) 
+  
+このときフォルダーの命名規則は似て非なるものになります。通常、サイト名とフォルダー名をハイフン（-）で連結した名前になりますが、「同期」はサイト名が左でフォルダー名が右ですが、「OneDriveへのショートカットの追加」はフォルダー名が左でサイト名が右になります。また、生成されるローカルパスは次のとおり微妙に異なります。 
   
 「同期」の場合：  
 ```
@@ -38,7 +41,7 @@ C:\Users\<USER-NAME>\<テナント名>\<フォルダーパス>
 C:\Users\<USER-NAME>\OneDrive - <テナント名>\<フォルダーパス>
 ```
   
-またた、どちらの場合も、ローカルパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>はURLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ロカールパスに含まれる<フォルダーパス>は「同期」または「OneDriveへのショートカットの追加」の対象となるフォルダを起点とする相対パスであるのに対して、URLパスに含まれる\<FOLDER-PATH>はドキュメントライブラリーのトップからの絶対パスになります。  
+またた、どちらの場合も、ローカルパスに含まれる<テナント名>はURLパスに含まれる\<TENANT-NAME>とは異なります。さらにロカールパスに含まれる<フォルダーパス>はURLパスに含まれる\<FOLDER-PATH>と必ずしも一致しません。ロカールパスに含まれる<フォルダーパス>は「同期」または「OneDriveへのショートカットの追加」の対象となるフォルダを起点とする相対パスであるのに対して、URLパスに含まれる\<FOLDER-PATH>はドキュメントライブラリーのルートからの絶対パスになります。  
 ここに挙げたURLパスもローカルパスも一例に過ぎず、文字列変換だけでURLパスをローカルパスに変換するのは事実上無理です。  
   
 ## 提案する解決策 
@@ -64,14 +67,14 @@ UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、M
 例えば、次のようなケースを想定します。
 ```
 UrlNameSpace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/  
-MountPoint   ： c:\Users\diary\OneDrive - MyCompany\General - TestSite1  
-Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/folder1 
+MountPoint   ： c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1  
+Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/Folder1/SubFolder1 
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
-SharePoint サイトのドキュメントライブラリの構造と表記の関係から、Workbook.Pathプロパティが返すURLパスのうち /General は MountPoint の \General - TestSite1 に相当ことがわかります。 
+SharePoint サイトのドキュメントライブラリの構造と表記の関係から、Workbook.Pathプロパティが返すURLパスのうち /Folder1 は MountPoint の \Folder1 - サイト1 に相当ことがわかります。 
 これらのことを踏まえ、Workbook.Pathが返すURLパスは次のローカルパスに変換できます。
 ```
-c:\Users\diary\OneDrive - MyCompany\General - TestSite1\folder1
+c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1\SubFolder1
 ```
   
 ## GetLocalPath 関数
@@ -104,7 +107,7 @@ Version: 1.001
   
 ## 既知の問題
   
-MountPointで示されるローカルパスには、SharePointサイトのドキュメントライブラリー配下にあるフィルダー名だけの情報しかありません。ドキュメントライブラリーのルートからのフルパスを示していませんので、例えば、当該フォルダー名が上位フォルダーと同一名の場合、上位フォルダーを当該フォルダーだと誤って認識する場合があります。この事象は当該フォルダーと同じ名前のフォルダーが下位にある場合は起きません。この事象を回避するための方法は現在調査中です。
+MountPointで示されるローカルパスには、SharePointサイトのドキュメントライブラリー配下にある、特定のフィルダー名だけの情報しかありません。ドキュメントライブラリーのルートからのフルパスを示していませんので、例えば、当該フォルダー名が上位フォルダーと同一名の場合、上位フォルダーを当該フォルダーだと誤って認識する場合があります。この事象は当該フォルダーと同じ名前のフォルダーが下位にある場合は起きません。この事象を回避するための方法は現在調査中です。
 
 ## ライセンス
   
