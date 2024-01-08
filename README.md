@@ -73,7 +73,7 @@ MountPoint   ： c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1
 Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/Folder1/SubFolder1 
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
-SharePoint サイトのドキュメントライブラリの構造と表記の関係から、Workbook.Pathプロパティが返すURLパスのうち /General/Folder1 までが MountPoint の \Folder1 - サイト1 に相当ことがわかります。 
+SharePoint サイトのドキュメントライブラリの階層構造とフォルダーの命名規則の関係から、Workbook.Pathプロパティが返すURLパスのうち /General/Folder1 までが MountPoint の \Folder1 - サイト1 に相当ことがわかります。 
 これらのことを踏まえ、Workbook.Pathが返すURLパスは次のローカルパスに変換できます。
 ```
 c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1\SubFolder1
