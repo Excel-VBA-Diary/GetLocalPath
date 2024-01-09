@@ -78,7 +78,7 @@ MountPoint   ： c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1
 Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/Folder1/SubFolder1 
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
-SharePoint サイトのドキュメントライブラリの階層構造とフォルダーの命名規則の関係から、Workbook.Pathプロパティが返すURLパスのうち /General/Folder1 までが MountPoint の \Folder1 - サイト1 に相当ことがわかります。 
+SharePoint サイトのドキュメントライブラリの階層構造とフォルダーの命名規則の関係から、Workbook.Pathプロパティが返すURLパスのうち「/General/Folder1」までが MountPoint の「\Folder1 - サイト1」に相当します。 
 これらのことを踏まえ、Workbook.Pathが返すURLパスは次のローカルパスに変換できます。
 ```
 c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1\SubFolder1
@@ -88,7 +88,7 @@ c:\Users\diary\OneDrive - MyCompany\Folder1 - サイト1\SubFolder1
 
 OneDriveのマウント情報を使ってURLパスをローカルパスに変換する関数が「GetLocalPath関数」です。
 引き数がローカルパスの場合は、変換せずにローカルパスをそのまま返しますので、例えば、コードの中の ThisWorkbook.Path を GetLocalPath(ThisWorkbook.Path) に置き換えて汎用的に使うことができます。
-Module_GetLocalPath.bas はVBAモジュールをエクスポートしたものです。この中にGet「LocalPath関数」が含まれています。Module_GetLocalPath.basをそのままインポートするか必要な部分をコピペしてお使いください。
+Module_GetLocalPath.bas はVBAモジュールをエクスポートしたものです。この中に「GetLocalPath関数」が含まれています。Module_GetLocalPath.basをそのままインポートするか必要な部分をコピペしてお使いください。
   
 ### 構文
 GetLocalPath(UrlPath, [UseCache])  
