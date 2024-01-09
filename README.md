@@ -63,6 +63,7 @@ OneDriveのマウント情報は次のレジストキー配下にあります。
 ![OneDrive-Registory-1](OneDrive-Registry-1.png)  
     
 それぞれのエントリーにはUrlNameSpaceとMountPointが対になって登録されています。  
+次の図はその例です。
 
 ![OneDrive-Registory-1](OneDrive-Registry-2.png) 
   
