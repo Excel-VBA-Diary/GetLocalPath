@@ -108,7 +108,7 @@ localPath = GetLocalPath(ThisWorkbook.Path)
 ```
 ### Module_GetLocalPath.bas バージョン
 Created: December 29, 2023  
-Last Updated: December 30, 2023  
+Last Updated: January 11, 2024  
 Version: 1.001  
   
 ## 4. 既知の問題
