@@ -2,7 +2,7 @@
 # OneDriveのExcel VBAでWorkbook.Pathプロパティが返すURLパスをローカルパスに変換する。  
 README(en).md for English version    
 初回投稿日：2023年12月29日  
-最終更新日：2024年1月11日
+最終更新日：2024年1月12日
 
 ## 1. 解決したい問題  
   
@@ -108,8 +108,8 @@ localPath = GetLocalPath(ThisWorkbook.Path)
 ```
 ### Module_GetLocalPath.bas バージョン
 Created: December 29, 2023  
-Last Updated: January 11, 2024  
-Version: 1.002  
+Last Updated: January 12, 2024  
+Version: 1.003  
   
 ## 4. 既知の問題
 
