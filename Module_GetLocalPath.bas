@@ -25,8 +25,8 @@ Option Explicit
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Created: December 29, 2023
-' Last Updated: January 11, 2024
-' Version: 1.002
+' Last Updated: January 12, 2024
+' Version: 1.003
 ' License: MIT
 '-------------------------------------------------------------------------------
 
@@ -90,6 +90,7 @@ Public Function GetLocalPath(UrlPath As String, _
         End If
     Next
     
+    lastUpdated = Now
    
 Already_Updated:
     
@@ -216,8 +217,7 @@ Verify_Folder_Exists:
     errNum = Err.Number
     On Error GoTo 0
     If errNum <> 0 Or returnDir = "" Then Exit Function
-    
-    lastUpdated = Now
+
     GetLocalPath = tmpLocalPath
 
 End Function
