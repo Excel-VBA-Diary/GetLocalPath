@@ -6,6 +6,10 @@ Option Explicit
 ' レジストリのOneDriveマウントポイント情報を参照してローカルパスを取得する.
 ' Resolve the problem with Workbook.Path returning URL in VBA on OneDrive.
 ' Refer to the OneDrive mount point information in the registry to get the local path.
+'
+' 参照設定で「Microsoft Scripting Runtime」を有効にする.
+' Check the "Microsoft Scripting Runtime" in the references dialog box.
+'
 ' Arguments:
 '   UrlPath: URL Path (String)
 '   UseCache: Use Mount Point Information Cache from Registry (Boolean)
@@ -21,8 +25,8 @@ Option Explicit
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Created: December 29, 2023
-' Last Updated: December 30, 2023
-' Version: 1.001
+' Last Updated: January 11, 2024
+' Version: 1.002
 ' License: MIT
 '-------------------------------------------------------------------------------
 
@@ -86,8 +90,7 @@ Public Function GetLocalPath(UrlPath As String, _
         End If
     Next
     
-    lastUpdated = Now
-    
+   
 Already_Updated:
     
     '有効なOneDriveマウント情報が無ければ終了する
@@ -166,7 +169,7 @@ Already_Updated:
                         'OneDrive for Business (Cloud Icon)
                         mountFolderName = tmpArray(0)
                     Else
-                        'SharePoint folser (Building Icon)
+                        'SharePoint sync folder (Building Icon)
                         mountFolderName = tmpArray(1)
                     End If
                 End If
@@ -212,7 +215,10 @@ Verify_Folder_Exists:
     returnDir = Dir(tmpLocalPath, vbDirectory)
     errNum = Err.Number
     On Error GoTo 0
-    If errNum = 0 And returnDir <> "" Then GetLocalPath = tmpLocalPath
+    If errNum <> 0 Or returnDir = "" Then Exit Function
+    
+    lastUpdated = Now
+    GetLocalPath = tmpLocalPath
 
 End Function
 
