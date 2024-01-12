@@ -72,7 +72,7 @@ UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、M
  
 例えば、次のようなケースを想定します。ここでは「OneDriveへのショートカットの追加」のケースを示しています。
 ```
-UrlNameSpace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/  
+UrlNamespace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/  
 MountPoint   ： c:\Users\diary\OneDrive - 株式会社VBA\General - サイト1  
 Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/SubFolder1 
 ```
