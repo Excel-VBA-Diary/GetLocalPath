@@ -73,14 +73,14 @@ UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、M
 例えば、次のようなケースを想定します。ここでは「OneDriveへのショートカットの追加」のケースを示しています。
 ```
 UrlNameSpace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/  
-MountPoint   ： c:\Users\diary\OneDrive - MyCompany\General - サイト1  
+MountPoint   ： c:\Users\diary\OneDrive - 株式会社VBA\General - サイト1  
 Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/SubFolder1 
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
 SharePoint サイトのドキュメントライブラリの階層構造とフォルダーの命名規則の関係から、Workbook.Pathプロパティが返すURLパスのうち「/General」が MountPoint の「\General - サイト1」に相当します。 
 これらのことを踏まえ、Workbook.Pathが返すURLパスは次のローカルパスに変換できます。
 ```
-c:\Users\diary\OneDrive - MyCompany\General - サイト1\SubFolder1
+c:\Users\diary\OneDrive - 株式会社VBA\General - サイト1\SubFolder1
 ```
   
 ## 3. GetLocalPath 関数
