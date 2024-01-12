@@ -72,8 +72,8 @@ UrlNameSpaceはSharePointのドキュメントライブラリーのURLパス、M
  
 例えば、次のようなケースを想定します。ここでは「OneDriveへのショートカットの追加」のケースを示しています。
 ```
-UrlNamespace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/  
-MountPoint   ： c:\Users\diary\OneDrive - 株式会社VBA\General - サイト1  
+MountPoint   ： c:\Users\diary\OneDrive - 株式会社VBA\General - サイト1 
+UrlNamespace ： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/ 
 Workbook.Path： https://xxxx.sharepoint.com/sites/SITE1/Shared Documents/General/SubFolder1 
 ```
 Workbook.Pathプロパティが返すURLパスの上位部分とUrlNameSpaceが一致していますので、MountPointのローカルパスまたはその配下にWorkbookが存在していると判断できます。
