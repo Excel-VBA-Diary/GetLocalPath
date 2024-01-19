@@ -25,7 +25,7 @@ https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-
 https://<TENANT-NAME>-my.sharepoint.com/personal/<User-Principal-Name>/Documents/<FOLDER-PATH>
 ```
 SharePointやTeamsのドキュメントライブラリーにアクセスするとコマンドバーに「同期」と「OneDriveへのショートカットの追加」のメニューが表示されます。  
-![OneDrive-Registory-1](OneDrive-Sync_vs_ShortCut-1.png)  
+![SharePoint-Sync_ShortCut-1](SharePoint-Sync_ShortCut-1.png)  
   
 どちらもエクスプローラーを使ってSharePointやTeamsのファイルにアクセスできる点では同じですが、フォルダーの置き場所は異なります。「同期」は建物アイコンの下に、「OneDriveへのショートカットの追加」は雲アイコンの下に追加されます。  
 （SharePointやTeamsのフォルダーをOneDriveに同期フォルダーまたはショートカットフォルダーとして割り当てることをここでは「マウント」と呼ぶことにします。）
