@@ -1,7 +1,7 @@
 # GetLocalPath
 # Convert the URL returned by Workbook.Path Property in Excel VBA on OneDrive to a local path.  
 Created: December 29, 2023  
-Last Updated: December 30, 2023  
+Last Updated: February 6, 2024  
 
 ## Problem to be solved  
   
@@ -96,8 +96,8 @@ localPath = GetLocalPath(ThisWorkbook.Path)
 
 ### Module_GetLocalPath.bas Version
 Created: December 29, 2023  
-Last Updated: December 30, 2023  
-Version: 1.001
+Last Updated: February 6, 2024  
+Version: 1.004
 
 ## Known Issue
   
