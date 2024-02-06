@@ -11,10 +11,14 @@ Option Explicit
 ' Check the "Microsoft Scripting Runtime" in the references dialog box.
 '
 ' Arguments:
-'   UrlPath: URL Path (String)
-'   UseCache: Use Mount Point Information Cache from Registry (Boolean)
-'             True  = Use cache (Cache Enable)
-'             False = Do not use cache (Cache Disable)
+'   UrlPath: URL Path (Required, String)
+'   UseCache: Use Mount Point Information Cache from Registry (Optional, Boolean)
+'             True  = Use cache (Default)
+'             False = Do not use cache
+'   DebugMode: Debug mode switch (Optional, Boolean)
+'             True  = Return mpiCache instead of local path (Debug Mode)
+'             False = Return local path (Default, Normal Mode)
+'
 ' Return Value:
 '   Local Path (String)
 '   Return null string if conversion to local path fails
@@ -25,43 +29,43 @@ Option Explicit
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Created: December 29, 2023
-' Last Updated: January 12, 2024
-' Version: 1.003
+' Last Updated: February 6, 2024
+' Version: 1.004
 ' License: MIT
 '-------------------------------------------------------------------------------
 
 Public Function GetLocalPath(UrlPath As String, _
-                             Optional UseCache As Boolean = True) As String
+                             Optional UseCache As Boolean = True, _
+                             Optional DebugMode As Boolean = False) As Variant
     
-    If Not UrlPath Like "http*" Then
+    If Not UrlPath Like "http*" And DebugMode = False Then
         GetLocalPath = UrlPath
         Exit Function
     End If
-   
-    'すべてのOneDriveマウントポイント情報を収集する
-    'Collect all OneDrive mount point information
-    'For speed, mpiCache collection is a Static variable
-    
-    Static mpiCache As Collection, lastUpdated As Date
-    Dim mpi As Dictionary
     
     'キャッシュがない場合、キャッシュ収集から30秒を超えた場合は、キャッシュを更新する
     'If no cache or more than 30 seconds since last update, the cache is updated
     
-    If Not (UseCache = False Or mpiCache Is Nothing Or Now - lastUpdated > 30 / 86400) Then
+    Static mpiCache As Collection, lastUpdated As Date
+    
+    If Not (mpiCache Is Nothing Or Now - lastUpdated > 30 / 86400 Or UseCache = False) Then
         GoTo Already_Updated
     End If
     
+    'STEP-1
+    'レジストリーからすべてのOneDriveマウント情報を収集する
+    'Collect all OneDrive mount information from registory
     
+    Const HKEY_CURRENT_USER As Long = &H80000001
+    Const S_HKEY_CURRENT_USER As String = "HKEY_CURRENT_USER\"
+    Const TARGET_KEY As String = "SOFTWARE\SyncEngines\Providers\OneDrive"
+    
+    Dim mpi As Dictionary
     Set mpiCache = New Collection
-    
-    Const HKEY_CURRENT_USER = &H80000001
-    Const S_HKEY_CURRENT_USER = "HKEY_CURRENT_USER\"
-    Const TARGETKEY = "SOFTWARE\SyncEngines\Providers\OneDrive"
     
     Dim objReg As Object
     Set objReg = CreateObject("WbemScripting.SWbemLocator"). _
-                 ConnectServer(vbNullString, "root\default").Get("StdRegProv")
+                 ConnectServer(, "root\default").Get("StdRegProv")
     
     Dim objShell As Object
     Set objShell = CreateObject("WScript.Shell")
@@ -70,18 +74,18 @@ Public Function GetLocalPath(UrlPath As String, _
     Dim entryNameSet As Variant, entryName As Variant, entryValue As Variant
     Dim entryPath As String
     
-    objReg.EnumKey HKEY_CURRENT_USER, TARGETKEY, subKeySet
+    objReg.EnumKey HKEY_CURRENT_USER, TARGET_KEY, subKeySet
     If IsNull(subKeySet) Then Exit Function
     
     For Each subKey In subKeySet
         'すべてのエントリー名とその値を取得する
         'collect all entry names and their values
-        objReg.EnumValues HKEY_CURRENT_USER, TARGETKEY & "\" & subKey, entryNameSet
+        objReg.EnumValues HKEY_CURRENT_USER, TARGET_KEY & "\" & subKey, entryNameSet
         If Not IsNull(entryNameSet) Then
             Set mpi = New Dictionary
             mpi.Add "ID", subKey
             For Each entryName In entryNameSet
-                entryPath = S_HKEY_CURRENT_USER & TARGETKEY & "\" & subKey & "\" & entryName
+                entryPath = S_HKEY_CURRENT_USER & TARGET_KEY & "\" & subKey & "\" & entryName
                 entryValue = objShell.regRead(entryPath)
                 mpi.Add entryName, entryValue
             Next
@@ -90,125 +94,153 @@ Public Function GetLocalPath(UrlPath As String, _
         End If
     Next
     
+    'STEP-2
+    'OneDriveの同期情報を取得してマウント情報を補完する
+    'Get OneDrive synchronization information to supplement mount information
+
+    Const SETTINGS_PATH As String = "\AppData\Local\Microsoft\OneDrive\Settings"
+    Const ODS_FOLDERS As String = "Business1,Business2,Personal"
+
+    Dim odsFolder As Variant, odsPath As String, odsIndex As Long, cid As String
+    Dim tempArray As Variant, j As Long, k As Long
+    For Each odsFolder In Split(ODS_FOLDERS, ",")
+        odsPath = Environ("USERPROFILE") & SETTINGS_PATH & "\" & odsFolder & "\"
+        If Dir(odsPath) = "" Then GoTo Skip_Supplement
+        cid = IniKeyValue(odsPath & "global.ini", "cid")
+        If cid = "" Then GoTo Skip_Supplement
+        tempArray = IniToArray(odsPath & cid & ".ini")
+        If IsEmpty(tempArray) Then GoTo Skip_Supplement
+        
+        For j = LBound(tempArray) To UBound(tempArray)
+            Select Case tempArray(j)(0)
+                ' "Sync" Case
+                Case "libraryScope"
+                    For Each mpi In mpiCache
+                        If mpi.Item("UrlNamespace") Like tempArray(j)(7) & "*" Then
+                            odsIndex = tempArray(j)(1)
+                            For k = LBound(tempArray) To UBound(tempArray)
+                                If tempArray(k)(0) = "libraryFolder" Then
+                                    If tempArray(k)(2) = odsIndex Then
+                                        mpi.Add "MountFolder", Trim(tempArray(k)(7))
+                                    End If
+                                End If
+                            Next
+                            If Not mpi.Exists("MountFolder") Then
+                                'Set Root Folder
+                                mpi.Add "MountFolder", ""
+                            End If
+                        End If
+                    Next
+                ' "Add shortcut to OneDrive" Case
+                Case "AddedScope"
+                    For Each mpi In mpiCache
+                        If mpi.Item("UrlNamespace") Like tempArray(j)(4) & "*" Then
+                            mpi.Add "FolderPath", Trim(tempArray(j)(10))
+                        End If
+                    Next
+                Case Else
+                    'Nothing to do
+            End Select
+        Next
+
+Skip_Supplement:
+    Next
+    
     lastUpdated = Now
-   
+    
+
 Already_Updated:
+    
+    'デバッグモードの場合はMPIキャッシュを返す
+    'Return mpi cache (mpiCache) if in debug mode
+    If DebugMode Then Set GetLocalPath = mpiCache: Exit Function
     
     '有効なOneDriveマウント情報が無ければ終了する
     'Exit if no valid OneDrive mount information
     If mpiCache.Count = 0 Then Exit Function
    
-    Dim strUrlNamespace As String, strMountPoint As String
-    Dim tmpLocalPath As String, tmpSubPath As String
-    
-    '個人用OneDriveのURLパスをローカルパスに変換する
-    'Convert personal OneDrive URL path to local path
-
-    If UrlPath Like "https://d.docs.live.net/????????????????*" Then
-        'Remove CID from personal OneDrive URL path for comparison with mount point information
-        UrlPath = Left(UrlPath, 23) & Mid(UrlPath, 41)
-        For Each mpi In mpiCache
-            strUrlNamespace = mpi.Item("UrlNamespace")
-            strMountPoint = mpi.Item("MountPoint")
-            If UrlPath Like strUrlNamespace & "*" Then
-                tmpSubPath = Replace(UrlPath, strUrlNamespace, "")
-                tmpSubPath = Replace(tmpSubPath, "/", "\")
-                tmpLocalPath = strMountPoint & tmpSubPath
-                GoTo Verify_Folder_Exists
-            End If
-        Next
-        'No corresponding NameSpace for UrlPath
-        Exit Function
-    End If
-    
-    '会社用OneDriveのURLパスをローカルパスに変換する
-    'Convert Company OneDrive URL path to local path
-    
-    Dim strLibraryType As String, isFolderScope As Boolean
-    Dim mountFolderName As String
+    'STEP-3
+    'OneDriveマウント情報をもとにURLパスをローカルパスに変換する
+    'Convert URL path to local path based on OneDrive mount information
+   
+    Dim strUrlNamespace As String, strLibraryType As String, strMountPoint As String
+    Dim subPath As String, tmpLocalPath As String
+    Dim mountFolderName As String, mountFolderPath As String
     Dim returnDir As String, errNum As Long
-    Dim tmpArray As Variant, i As Long
+    Dim i As Long
     
     For Each mpi In mpiCache
+        
         strUrlNamespace = mpi.Item("UrlNamespace")
-        If strUrlNamespace Like "*/" Then
+        strLibraryType = LCase(mpi.Item("LibraryType"))
+        
+        If Right(strUrlNamespace, 1) = "/" Then
             strUrlNamespace = Left(strUrlNamespace, Len(strUrlNamespace) - 1)
         End If
+        If strLibraryType = "personal" Then
+            strUrlNamespace = strUrlNamespace & "/" & mpi.Item("CID")
+        End If
+        
         If Not (UrlPath Like strUrlNamespace & "*") Then GoTo Skip_To_Next
         
-        strLibraryType = mpi.Item("LibraryType")
+        subPath = Replace(UrlPath, strUrlNamespace, "")
+        subPath = Replace(subPath, "/", "\")
         strMountPoint = mpi.Item("MountPoint")
-        isFolderScope = CBool(mpi.Item("IsFolderScope"))
-            
-        If strLibraryType = "mysite" Or strLibraryType = "personal" Then
-            tmpSubPath = Replace(UrlPath, strUrlNamespace, "")
-            tmpSubPath = Replace(tmpSubPath, "/", "\")
-            If tmpSubPath = "" Or tmpSubPath = "\" Then
-                tmpLocalPath = strMountPoint
-            Else
-                tmpLocalPath = strMountPoint & tmpSubPath
-            End If
+        If subPath = "" Or subPath = "\" Then
+            tmpLocalPath = strMountPoint
             GoTo Verify_Folder_Exists
-        Else
-            tmpSubPath = Replace(UrlPath, strUrlNamespace, "")
-            tmpSubPath = Replace(tmpSubPath, "/", "\")
-            If tmpSubPath = "" Or tmpSubPath = "\" Then
-                tmpLocalPath = strMountPoint
+        End If
+        
+        Select Case True
+        
+            ' In case of MySite or Personal
+            Case strLibraryType = "mysite" Or strLibraryType = "personal"
+                tmpLocalPath = strMountPoint & subPath
                 GoTo Verify_Folder_Exists
-            End If
-
-            tmpArray = Split(strMountPoint, "\")
-            If UBound(tmpArray) = 4 Then
-                
-                '同期したフォルダ名を抽出する
-                'Eextract synchronized folder name
-                
-                mountFolderName = tmpArray(4)
-                tmpArray = Split(mountFolderName, " - ")
-                If UBound(tmpArray) = 1 Then
-                    If strMountPoint Like Environ("OneDriveCommercial") & "*" Then
-                        'OneDrive for Business (Cloud Icon)
-                        mountFolderName = tmpArray(0)
-                    Else
-                        'SharePoint sync folder (Building Icon)
-                        mountFolderName = tmpArray(1)
-                    End If
+        
+            ' In case of mounting by "Add shortcut to OneDrive"
+            Case mpi.Exists("FolderPath")
+                mountFolderPath = mpi.Item("FolderPath")
+                If mountFolderPath <> "" Then
+                    mountFolderPath = "\" & Replace(mpi.Item("FolderPath"), "/", "\")
                 End If
-            
-                'マウントフォルダーをサーチする
-                'Search mounted folder
-                
-                i = InStr(1, tmpSubPath, "\" & mountFolderName)
-                If i = 0 Then
-                    tmpLocalPath = strMountPoint & tmpSubPath
+                If subPath Like mountFolderPath & "*" Then
+                    tmpLocalPath = strMountPoint & Mid(subPath, Len(mountFolderPath) + 1)
                     GoTo Verify_Folder_Exists
                 End If
-                Do
-                    tmpSubPath = Mid(tmpSubPath, i + Len(mountFolderName) + 1)
-                    tmpLocalPath = strMountPoint & tmpSubPath
-                    On Error Resume Next
-                    returnDir = Dir(tmpLocalPath, vbDirectory)
-                    errNum = Err.Number
-                    On Error GoTo 0
-                    If errNum = 0 And returnDir <> "" Then
-                        GetLocalPath = tmpLocalPath
-                        Exit Function
-                    End If
-                    i = InStr(i, tmpSubPath, "\" & mountFolderName)
-                Loop While i > 0
-            Else
-                tmpLocalPath = strMountPoint & tmpSubPath
-                GoTo Verify_Folder_Exists
-            End If
-        End If
+                GoTo Skip_To_Next
+     
+            ' In case of mounting by "Sync"
+            Case mpi.Exists("MountFolder")
+                mountFolderName = mpi.Item("MountFolder")
+                If mountFolderName = "" Then
+                    tmpLocalPath = strMountPoint & subPath
+                    GoTo Verify_Folder_Exists
+                End If
+                i = InStr(1, subPath & "\", "\" & mountFolderName & "\")
+                If i > 0 Then
+                    subPath = Mid(subPath, i + Len(mountFolderName) + 1)
+                    tmpLocalPath = strMountPoint & subPath
+                    GoTo Verify_Folder_Exists
+                End If
+                GoTo Skip_To_Next
+
+            ' In case of unexpected
+            Case Else
+                Exit Function
+        
+        End Select
+
 Skip_To_Next:
     Next
 
-    'No corresponding NameSpace for UrlPath
+    'URLパスに該当するマウント情報がないためローカルパスへの変換に失敗した
+    'Conversion to local path failed due to lack of mount information corresponding to URL path
     Exit Function
 
 Verify_Folder_Exists:
                    
+    'STEP-4
     '実際にフォルダーが存在するか確認する
     'Verify that the folder actually exists
     
@@ -224,13 +256,119 @@ End Function
 
 
 '-------------------------------------------------------------------------------
+' INIファイルから指定されたキーの値を取得する
+' Get the value of a specified key from an INI file
+'-------------------------------------------------------------------------------
+
+Public Function IniKeyValue(IniFilePath As String, keyName As String) As String
+    
+    If IniFilePath = "" Or Dir(IniFilePath) = "" Then
+        IniKeyValue = ""
+        Exit Function
+    End If
+    
+    'Reads INI file in UTF-16 format
+    Dim fileNumber As Long, byteBuf() As Byte, lineBuf As Variant
+    fileNumber = FreeFile
+    Open IniFilePath For Binary Access Read As #fileNumber
+    ReDim byteBuf(LOF(fileNumber) - 1)
+    Get #fileNumber, , byteBuf
+    lineBuf = Split(CStr(byteBuf), vbCrLf)
+    Close #fileNumber
+    
+    Dim i As Long, p As Long
+    For i = LBound(lineBuf) To UBound(lineBuf)
+        If LCase(lineBuf(i)) Like LCase(keyName) & "*" Then
+            p = InStr(lineBuf(i), "=")
+            If p = 0 Then Exit Function
+            IniKeyValue = Trim(Mid(lineBuf(i), p + 1))
+            Exit Function
+        End If
+    Next
+    
+    'The specified key was not found.
+    IniKeyValue = vbNullString
+
+End Function
+
+
+'-------------------------------------------------------------------------------
+' INIファイルを開きOneDrive設定情報をジャグ配列に取り込む
+' Open INI file and import OneDrive setting information into jag array
+'-------------------------------------------------------------------------------
+
+Public Function IniToArray(IniFilePath As String) As Variant
+    
+    If IniFilePath = "" Or Dir(IniFilePath) = "" Then
+        IniToArray = Empty
+        Exit Function
+    End If
+    
+    'Reads INI file in UTF-16 format
+    Dim fileNumber As Long, byteBuf() As Byte, lineBuf As Variant
+    fileNumber = FreeFile
+    Open IniFilePath For Binary Access Read As #fileNumber
+    ReDim byteBuf(LOF(fileNumber) - 1)
+    Get #fileNumber, , byteBuf
+    lineBuf = Split(CStr(byteBuf), vbCrLf)
+    Close #fileNumber
+    
+    Const TARGET_KEYS As String = "libraryScope,libraryFolder,AddedScope,library,dummy"
+    
+    Dim i As Long, j As Long, p As Long, entryBuf As String, keyName As String, keyBuf As Variant
+    Dim pArray() As Variant, pCount As Long
+    ReDim pArray(UBound(lineBuf)): pCount = 0
+    Dim cArray() As Variant, cCount As Long
+    
+    For i = 0 To UBound(lineBuf)
+        entryBuf = lineBuf(i)
+        p = InStr(entryBuf, "=")
+        If p = 0 Then GoTo Skip_Convert
+        keyName = Trim(Left(entryBuf, p - 1))
+        If InStr(TARGET_KEYS, keyName & ",") = 0 Then GoTo Skip_Convert
+        
+        ReDim cArray(0): cArray(0) = keyName
+        cCount = 1
+        j = p + 1
+        Do While j <= Len(entryBuf)
+            Select Case Mid(entryBuf, j, 1)
+                Case """"
+                    p = InStr(j + 1, entryBuf, """")
+                    If p = 0 Then p = Len(entryBuf) + 1
+                    ReDim Preserve cArray(cCount)
+                    cArray(cCount) = Mid(entryBuf, j + 1, p - j - 1)
+                    cCount = cCount + 1
+                    j = p + 1
+                Case " "
+                    j = j + 1
+                Case Else
+                    p = InStr(j + 1, entryBuf, " ")
+                    If p = 0 Then p = Len(entryBuf) + 1
+                    ReDim Preserve cArray(cCount)
+                    cArray(cCount) = Mid(entryBuf, j, p - j)
+                    cCount = cCount + 1
+                    j = p + 1
+            End Select
+        Loop
+        ReDim Preserve pArray(pCount)
+        pArray(pCount) = cArray
+        pCount = pCount + 1
+Skip_Convert:
+    Next
+    
+    IniToArray = pArray
+    
+End Function
+
+
+'-------------------------------------------------------------------------------
 ' テストコード
 ' Test code for GetLocalPath
 '-------------------------------------------------------------------------------
 
 Private Sub Functional_Test_GetLocalPath()
     Debug.Print "URL Path", ThisWorkbook.Path
-    Debug.Print "Local Path", GetLocalPath(ThisWorkbook.Path)
+    Debug.Print "Local Path", GetLocalPath(ThisWorkbook.Path, False)
 End Sub
 
 Private Sub Speed_Test_GetLocalPath()
@@ -251,4 +389,5 @@ End Sub
 ' このモジュールはここで終わり
 ' The script for this module ends here
 '-------------------------------------------------------------------------------
+
 
