@@ -103,7 +103,8 @@ GetLocalPath(UrlPath, [UseCache])
 ----|----
 |UrlPath|必須。String型。Workbook.Pathが返すURLパス（文字列）を指定します。|
 |UseCache|省略可。Boolean型。キャッシュを使う場合はTrue、使わない場合はFalseを指定します。省略時の規定値はTrueです。GetLocalPath関数はレジストリからOneDriveのマウント情報を読み込みキャッシュ（Static変数）に保存します。2回目以降のGetLocalPath関数呼び出し時に、このキャッシュを使うことで処理を高速化しています。キャッシュはVBAマクロのExcelブックを閉じるまで有効です。UseCacheの指定にかかわらず、前回のキャッシュ読み込みから30秒経過した場合は再度レジストリを読み込みキャッシュを更新します。|
-
+|DebugMode|省略可。Boolean型。Trueの場合はローカルパスを返すかわりに取得したOneDriveマウント情報のキャッシュ(Collection型)を返します。Falseの場合はローカルパスを返します。省略時の規定値はFalseです。この引数は取得したOneDrive情報を解析するためのもので通常は使いません。|
+  
 ### 戻り値
 
 GetLocalPath関数はローカルパスを文字列で返します。
