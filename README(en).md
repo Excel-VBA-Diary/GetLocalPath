@@ -81,8 +81,9 @@ GetLocalPath(UrlPath, [UseCache])
 
 |Part|Description|
 ----|----
-|UrlPath|Required.  String expression of URL path returned by Workbook.Path property.|
-|UseCache|Optional. Specify True to use the cache or False to not use the cache. The GetLocalPath function reads the OneDrive mount information from the registry and stores it in the cache (Static variable), which is used on the second and subsequent calls to the GetLocalPath function to speed up processing. The cache is valid until the Excel book of the VBA macro is closed. Regardless of the UseCache setting, if 30 seconds have elapsed since the last time the cache was read, the registry is read again and the cache is updated.
+|UrlPath|Required. String expression of URL path returned by Workbook.Path property.|
+|UseCache|Optional, Boolean; Specify True to use the cache or False to not use the cache. The GetLocalPath function reads the OneDrive mount information from the registry and stores it in the cache (Static variable), which is used on the second and subsequent calls to the GetLocalPath function to speed up processing. The cache is valid until the Excel book of the VBA macro is closed. Regardless of the UseCache setting, if 30 seconds have elapsed since the last time the cache was read, the registry is read again and the cache is updated.|
+|DebugMode|Optional, Boolean; if True, returns a cache (Collection type) of OneDrive mount information retrieved instead of the local path; if False, returns the local path. When omitted, the default value is False. This argument is used to parse the retrieved OneDrive information and is not normally used.|
 
 ### Return values
 
