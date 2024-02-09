@@ -86,7 +86,7 @@ Module_GetLocalPath.bas is an exported VBA module, which contains the Get "Local
 You can import Module_GetLocalPath.bas as is or copy and paste the necessary parts.  
   
 ### Syntax
-GetLocalPath(UrlPath, [UseCache])  
+GetLocalPath(UrlPath, [UseCache], [DebugMode])  
 
 |Part|Description|
 ----|----
