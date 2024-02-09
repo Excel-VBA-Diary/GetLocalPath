@@ -22,7 +22,15 @@ https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-
 ```    
 https://<TENANT-NAME>-my.sharepoint.com/personal/<User-Principal-Name>/Documents/<FOLDER-PATH>
 ```  
-There are two ways to access SharePoint and Teams files using Explorer: "Sync" and "Add Shortcut to OneDrive". The local paths that are generated are as follows   
+When accessing the SharePoint or Teams document library, a menu of "Sync" and "Add Shortcut to OneDrive" will appear in the command bar.  
+![SharePoin-Sync_Shortcut-1(en)](SharePoin-Sync_Shortcut-1(en).png) 
+  
+Both are the same in that you can use Explorer to access SharePoint and Teams files, but the location of the folders is different. Sync" is added under the building icon, while "Add shortcut to OneDrive" is added under the cloud icon.  
+(Assigning a SharePoint or Teams folder to OneDrive as a sync folder or shortcut folder is referred to here as "mounting.") 
+   
+The names of the folders to be mounted in this case will not be similar. Usually, "Sync" is a hyphenated combination of the site name and the folder name (site name on the left, folder name on the right). On the other hand, "Add shortcut to OneDrive" can be a folder name alone or a folder name and a site name joined by a hyphen (-) (folder name on the left, site name on the right).  
+  
+The local path is different as follows Sync" is the tenant name only, whereas "Add shortcut to OneDrive" is "OneDrive" followed by the tenant name.   
 
 For "Sync":  
 ```
@@ -33,9 +41,10 @@ For "Add Shortcut to OneDrive":
 C:\Users\<USER-NAME>\OneDrive - <TENANT-NAME>\<FOLDER-PATH>
 ```
   
-The local paths in "Sync" and "Add Shortcut to OneDrive" are slightly different. Also, the \<tenant-name> in the local path is different from the ″<tenant-name> in the URL path. Furthermore, \<folder-path> included in the locale path is different from not necessarily the same as the \<FOLDER-PATH> contained in the URL path. Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.    
-  
-  
+In both cases, the <TENANT-NAME> contained in the LOCAL-PATH is usually different from the <TENANT-NAME> contained in the URL-PATH.
+Furthermore, the <folder-path> contained in the locale-path does not necessarily match the <FOLDER-PATH> contained in the URL-path. The <FOLDER-PATH> in the URL path is an absolute path from the root of the document library while the <FOLDER-PATH> in the locale path is a relative path from the target folder of "Sync" or "Add Shortcut to OneDrive". The URL paths listed here are also local paths.  
+Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.  
+    
 ## Proposed Solution  
 
 ### OneDrive mounting information
