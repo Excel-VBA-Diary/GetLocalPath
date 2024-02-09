@@ -97,7 +97,7 @@ OneDriveのマウント情報を使ってURLパスをローカルパスに変換
 Module_GetLocalPath.bas はVBAモジュールをエクスポートしたものです。この中に「GetLocalPath関数」が含まれています。Module_GetLocalPath.basをそのままインポートするか必要な部分をコピペしてお使いください。
   
 ### 構文
-GetLocalPath(UrlPath, [UseCache])  
+GetLocalPath(UrlPath, [UseCache], [DebugMode])  
 
 |引き数|説明|
 ----|----
