@@ -1,6 +1,6 @@
 # GetLocalPath
 # OneDriveでWorkbook.Pathプロパティ返すURLパスをローカルパスに変換する。（#Excel VBA #OneDrive）  
-README(en).md for English version    
+[README(en).md](https://github.com/Excel-VBA-Diary/GetLocalPath/README(en).md) for English version    
 初回投稿日：2023年12月29日  
 最終更新日：2024年2月6日
 
