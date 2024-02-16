@@ -29,8 +29,8 @@ Option Explicit
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Created: December 29, 2023
-' Last Updated: February 6, 2024
-' Version: 1.004
+' Last Updated: February 16, 2024
+' Version: 1.005
 ' License: MIT
 '-------------------------------------------------------------------------------
 
@@ -177,7 +177,7 @@ Already_Updated:
         If Right(strUrlNamespace, 1) = "/" Then
             strUrlNamespace = Left(strUrlNamespace, Len(strUrlNamespace) - 1)
         End If
-        If strLibraryType = "personal" Then
+        If LCase(mpi.Item("ID")) = "personal" Then
             strUrlNamespace = strUrlNamespace & "/" & mpi.Item("CID")
         End If
         
@@ -193,7 +193,7 @@ Already_Updated:
         
         Select Case True
         
-            ' In case of MySite or Personal
+            ' In case of MySite or personal
             Case strLibraryType = "mysite" Or strLibraryType = "personal"
                 tmpLocalPath = strMountPoint & subPath
                 GoTo Verify_Folder_Exists
