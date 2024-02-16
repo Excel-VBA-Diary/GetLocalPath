@@ -1,7 +1,7 @@
 # GetLocalPath
 # Convert the URL returned by Workbook.Path Property in Excel VBA on OneDrive to a local path.  
 Created: December 29, 2023  
-Last Updated: February 6, 2024  
+Last Updated: February 16, 2024  
 
 ## 1. Problem to be solved  
   
@@ -26,11 +26,12 @@ When accessing the SharePoint or Teams document library, a menu of "Sync" and "A
 ![SharePoint-Sync_Shortcut-1(en)](SharePoint-Sync_Shortcut-1(en).png) 
   
 Both are the same in that you can use Explorer to access SharePoint and Teams files, but the location of the folders is different. Sync" is added under the building icon, while "Add shortcut to OneDrive" is added under the cloud icon.  
-(Assigning a SharePoint or Teams folder to OneDrive as a sync folder or shortcut folder is referred to here as "mounting.") 
+(Assigning a SharePoint or Teams folder to OneDrive as a sync folder or shortcut folder is referred to here as "mounting.")   
+![SharePoint-Sync_Shortcut-1(en)](SharePoint-Sync_Shortcut-2(en).png)   
    
-The names of the folders to be mounted in this case will not be similar. Usually, "Sync" is a hyphenated combination of the site name and the folder name (site name on the left, folder name on the right). On the other hand, "Add shortcut to OneDrive" can be a folder name alone or a folder name and a site name joined by a hyphen (-) (folder name on the left, site name on the right).  
+The names of the folders to be mounted in this case will not be similar. Usually, "Synchronize" is a hyphenated combination of the site name and the folder name (site name on the left, folder name on the right). On the other hand, "Add shortcut to OneDrive" can be a single folder name or a folder name and site name joined by a hyphen (-) (folder name on the left, site name on the right).   
   
-The local path is different as follows Sync" is the tenant name only, whereas "Add shortcut to OneDrive" is "OneDrive" followed by the tenant name.   
+The local path is different as follows. Synchronize" is just the tenant name, while "Add shortcut to OneDrive" is a concatenation of "OneDrive" and the tenant name.    
 
 For "Sync":  
 ```
@@ -41,9 +42,9 @@ For "Add Shortcut to OneDrive":
 C:\Users\<USER-NAME>\OneDrive - <TENANT-NAME>\<FOLDER-PATH>
 ```
   
-In both cases, the <TENANT-NAME> contained in the LOCAL-PATH is usually different from the <TENANT-NAME> contained in the URL-PATH.
-Furthermore, the <folder-path> contained in the locale-path does not necessarily match the <FOLDER-PATH> contained in the URL-path. The <FOLDER-PATH> in the URL path is an absolute path from the root of the document library while the <FOLDER-PATH> in the locale path is a relative path from the target folder of "Sync" or "Add Shortcut to OneDrive". The URL paths listed here are also local paths.  
-Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.  
+In both cases, <tenant-name> in the local path does not necessarily match <tenant-name> in the URL path.
+Furthermore, the <folder-path> included in the local-path does not necessarily match the <FOLDER-PATH> included in the URL-path. The <FOLDER-PATH> in a local path is relative to the folder from which the "Sync" or "Add Shortcut to OneDrive" is taken, whereas the <FOLDER-PATH> in a URL path is an absolute path from the root of the document library. The URL paths listed here are also local paths.  
+Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path using string conversion alone.  
     
 ## 2. Proposed Solution  
 
@@ -62,6 +63,13 @@ Each entry is registered with a pair of UrlNameSpace and MountPoint.
 ![OneDrive-Registory-1](OneDrive-Registry-2.png) 
   
 UrlNameSpace is the URL path to the SharePoint document library, and MountPoint is the local path under OneDrive. if there is an UrlNameSpace that matches the upper portion of the URL path returned by Workbook.Path the corresponding MountPoint for the UrlNameSpace can be found.
+
+In addition, OneDrive configuration information is located at the following local paths.  
+```
+C:\Users\<USER-NAME>\AppData\Local\Microsoft\OneDrive\Settings
+```
+Depending on your Windows and OneDrive environment, there are three folders under this folder: Business1, Business2, and Personal.  
+Using the "global.ini" file in this folder as a clue, check the related INI file to complete the OneDrive mount information.  
   
 ### Overview of conversion mechanism 
   
