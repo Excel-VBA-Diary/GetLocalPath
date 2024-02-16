@@ -108,13 +108,25 @@ GetLocalPath(UrlPath, [UseCache], [DebugMode])
 ### 戻り値
 
 GetLocalPath関数はローカルパスを文字列で返します。  
-DebugModeがTrueの場合はOneDriveマウント情報のキャッシュ(Collection型)を返します。  
+DebugModeがTrueの場合はUrlPathの指定にかかわらずOneDriveマウント情報のキャッシュ(Collection型)を返します。  
   
 ### 例
+通常の場合：
 ```
 Dim localPath As String
 localPath = GetLocalPath(ThisWorkbook.Path)
 ```
+関数呼び出しの都度キャッシュを更新する場合：
+```
+Dim localPath As String
+localPath = GetLocalPath(ThisWorkbook.Path, False)
+```
+OneDriveマウント情報を取得する場合（デバッグモード）：
+```
+Dim mpiCache As Collection
+Set mpiCache = GetLocalPath(vbNullString, False, True)
+```
+  
 ### Module_GetLocalPath.bas バージョン
 Created: December 29, 2023  
 Last Updated: February 16, 2024  
