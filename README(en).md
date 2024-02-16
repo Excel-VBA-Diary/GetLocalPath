@@ -3,7 +3,7 @@
 Created: December 29, 2023  
 Last Updated: February 6, 2024  
 
-## Problem to be solved  
+## 1. Problem to be solved  
   
 There is a problem with the Workbook.Path property returning a URL pass when I run Excel VBA on OneDrive. It is not possible to get the local path of that book, and the URL pass is inconvenient, as the Dir function causes a runtime error and FileSystemObject cannot be used.  
   
@@ -45,7 +45,7 @@ In both cases, the <TENANT-NAME> contained in the LOCAL-PATH is usually differen
 Furthermore, the <folder-path> contained in the locale-path does not necessarily match the <FOLDER-PATH> contained in the URL-path. The <FOLDER-PATH> in the URL path is an absolute path from the root of the document library while the <FOLDER-PATH> in the locale path is a relative path from the target folder of "Sync" or "Add Shortcut to OneDrive". The URL paths listed here are also local paths.  
 Both URL paths and local paths listed here are only examples, and it is virtually impossible to convert a URL path to a local path by string conversion alone.  
     
-## Proposed Solution  
+## 2. Proposed Solution  
 
 ### OneDrive mounting information
   
@@ -78,7 +78,7 @@ Based on these, the URL path returned by Workbook.Path can be converted to the f
 c:\Users\diary\OneDrive - MyCompany\General - TestSite1\folder1
 ```
   
-## GetLocalPath Function
+## 3. GetLocalPath Function
 
 The GetLocalPath function converts URL paths to local paths using OneDrive mount information.
 If the argument is a local path, it returns the local path as it is without conversion, so it can be used universally by replacing ThisWorkbook.Path in the code with GetLocalPath(ThisWorkbook.Path), for example.
@@ -109,9 +109,14 @@ Created: December 29, 2023
 Last Updated: February 6, 2024  
 Version: 1.004
 
-## Known Issue
+## 4. Known Issue  
   
+### /(1) If there is an upper folder in OneDrive that has the same name as the mounted folder name
 The local path shown by MountPoint contains only the name of a target folder under the document library on the SharePoint site. For example, if the name of a target folder is the same as that of an upper-level folder, the upper-level folder may be mistakenly identified as the target folder. This issue will not happen if there is a subordinate folder with the same name as the target folder. Now investigating a workaround for this issue.
+
+### /(2) If a folder is renamed or moved after mounting it with "Add Shortcut to OneDrive"  
+It is possible to rename a folder or move a folder after mounting it with "Add Shortcut to OneDrive". However, since these changes are not immediately reflected in the registry, the MountPoint in the registry will not match the actual folder name in OneDrive. Therefore, the folder indicated by the MountPoint is determined to not exist, and the GetLocalPath function returns a null character (a zero-length string).
+If you change the folder name or move the folder after mounting it with "Add Shortcut to OneDrive", please restart Windows.  
   
 ## LICENSE
 This code is available under the MIT License.
