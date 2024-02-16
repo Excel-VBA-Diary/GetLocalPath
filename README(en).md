@@ -23,11 +23,11 @@ https://<TENANT-NAME>.sharepoint.com/sites/<SITE-NAME>/Shared Documents/<FOLDER-
 https://<TENANT-NAME>-my.sharepoint.com/personal/<User-Principal-Name>/Documents/<FOLDER-PATH>
 ```  
 When accessing the SharePoint or Teams document library, a menu of "Sync" and "Add Shortcut to OneDrive" will appear in the command bar.  
-![SharePoint-Sync_Shortcut-1(en)](SharePoint-Sync_Shortcut-1(en).png) 
+![SharePoint-Sync_Shortcut-1(en)](SharePoint-Sync_ShortCut-1(en).png) 
   
 Both are the same in that you can use Explorer to access SharePoint and Teams files, but the location of the folders is different. Sync" is added under the building icon, while "Add shortcut to OneDrive" is added under the cloud icon.  
 (Assigning a SharePoint or Teams folder to OneDrive as a sync folder or shortcut folder is referred to here as "mounting.")   
-![SharePoint-Sync_Shortcut-1(en)](SharePoint-Sync_Shortcut_2(en).png)   
+![SharePoint-Sync_Shortcut_2(en)](SharePoint-Sync_ShortCut_2(en).png)   
    
 The names of the folders to be mounted in this case will not be similar. Usually, "Synchronize" is a hyphenated combination of the site name and the folder name (site name on the left, folder name on the right). On the other hand, "Add shortcut to OneDrive" can be a single folder name or a folder name and site name joined by a hyphen (-) (folder name on the left, site name on the right).   
   
