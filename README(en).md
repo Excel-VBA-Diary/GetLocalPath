@@ -60,7 +60,7 @@ Under this registry key are the entries (subkeys) that are mounted in OneDrive. 
     
 Each entry is registered with a pair of UrlNameSpace and MountPoint.    
 
-![OneDrive-Registory-1](OneDrive-Registry-2.png) 
+![OneDrive-Registory-2(en)](OneDrive-Registry-2(en).png) 
   
 UrlNameSpace is the URL path to the SharePoint document library, and MountPoint is the local path under OneDrive. if there is an UrlNameSpace that matches the upper portion of the URL path returned by Workbook.Path the corresponding MountPoint for the UrlNameSpace can be found.
 
