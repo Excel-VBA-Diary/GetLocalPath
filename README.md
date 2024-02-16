@@ -2,7 +2,7 @@
 # OneDriveでWorkbook.Pathプロパティ返すURLパスをローカルパスに変換する。（#Excel VBA #OneDrive）  
 [README(en).md](https://github.com/Excel-VBA-Diary/GetLocalPath/blob/main/README(en).md) for English version    
 初回投稿日：2023年12月29日  
-最終更新日：2024年2月6日
+最終更新日：2024年2月16日
 
 ## 1. 解決したい問題  
   
@@ -107,7 +107,8 @@ GetLocalPath(UrlPath, [UseCache], [DebugMode])
   
 ### 戻り値
 
-GetLocalPath関数はローカルパスを文字列で返します。
+GetLocalPath関数はローカルパスを文字列で返します。  
+DebugModeがTrueの場合はOneDriveマウント情報のキャッシュ(Collection型)を返します。  
   
 ### 例
 ```
@@ -116,8 +117,8 @@ localPath = GetLocalPath(ThisWorkbook.Path)
 ```
 ### Module_GetLocalPath.bas バージョン
 Created: December 29, 2023  
-Last Updated: February 6, 2024  
-Version: 1.004   
+Last Updated: February 16, 2024  
+Version: 1.005   
   
 ## 4. 既知の問題
 
