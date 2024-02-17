@@ -107,15 +107,26 @@ GetLocalPath(UrlPath, [UseCache], [DebugMode])
 GetLocalPath returns a local path.
 
 ### Examples of Use
+Normal case:  
 ```
-Dim localPath As String
-localPath = GetLocalPath(ThisWorkbook.Path) 
+Dim localPath As String  
+localPath = GetLocalPath(ThisWorkbook.Path)  
+```
+Update the cache each time the function is called:  
+```
+Dim localPath As String  
+localPath = GetLocalPath(ThisWorkbook.Path, False)  
+```
+To retrieve OneDrive mount information (debug mode):  
+```
+Dim mpiCache As Collection  
+Set mpiCache = GetLocalPath(vbNullString, False, True)  
 ```
 
 ### Module_GetLocalPath.bas Version
 Created: December 29, 2023  
-Last Updated: February 6, 2024  
-Version: 1.004
+Last Updated: February 16, 2024  
+Version: 1.005  
 
 ## 4. Known Issue  
   
