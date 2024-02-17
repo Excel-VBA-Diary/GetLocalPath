@@ -119,12 +119,12 @@ Version: 1.004
 
 ## 4. Known Issue  
   
-### /(1) If there is an upper folder in OneDrive that has the same name as the mounted folder name
+### (1) If there is an upper folder in OneDrive that has the same name as the mounted folder name
 The local path shown by MountPoint contains only the name of a target folder under the document library on the SharePoint site. For example, if the name of a target folder is the same as that of an upper-level folder, the upper-level folder may be mistakenly identified as the target folder. This issue will not happen if there is a subordinate folder with the same name as the target folder. Now investigating a workaround for this issue.
 
-### /(2) If a folder is renamed or moved after mounting it with "Add Shortcut to OneDrive"  
+### (2) If a folder is renamed or moved after mounting it with "Add Shortcut to OneDrive"  
 It is possible to rename a folder or move a folder after mounting it with "Add Shortcut to OneDrive". However, since these changes are not immediately reflected in the registry, the MountPoint in the registry will not match the actual folder name in OneDrive. Therefore, the folder indicated by the MountPoint is determined to not exist, and the GetLocalPath function returns a null character (a zero-length string).
 If you change the folder name or move the folder after mounting it with "Add Shortcut to OneDrive", please restart Windows.  
   
-## LICENSE
+## 5. LICENSE
 This code is available under the MIT License.
