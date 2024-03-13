@@ -29,8 +29,8 @@ Option Explicit
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Created: December 29, 2023
-' Last Updated: February 16, 2024
-' Version: 1.005
+' Last Updated: March 13, 2024
+' Version: 1.006
 ' License: MIT
 '-------------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ Public Function GetLocalPath(UrlPath As String, _
     Const ODS_FOLDERS As String = "Business1,Business2,Personal"
 
     Dim odsFolder As Variant, odsPath As String, odsIndex As Long, cid As String
-    Dim tempArray As Variant, j As Long, k As Long
+    Dim tempArray As Variant, tempFolder As String, j As Long, k As Long
     For Each odsFolder In Split(ODS_FOLDERS, ",")
         odsPath = Environ("USERPROFILE") & SETTINGS_PATH & "\" & odsFolder & "\"
         If Dir(odsPath) = "" Then GoTo Skip_Supplement
@@ -113,33 +113,36 @@ Public Function GetLocalPath(UrlPath As String, _
         
         For j = LBound(tempArray) To UBound(tempArray)
             Select Case tempArray(j)(0)
-                ' "Sync" Case
+                ' "Sync" and Root folder Case
                 Case "libraryScope"
                     For Each mpi In mpiCache
-                        If mpi.Item("UrlNamespace") Like tempArray(j)(7) & "*" Then
-                            odsIndex = tempArray(j)(1)
-                            For k = LBound(tempArray) To UBound(tempArray)
-                                If tempArray(k)(0) = "libraryFolder" Then
-                                    If tempArray(k)(2) = odsIndex Then
-                                        mpi.Add "MountFolder", Trim(tempArray(k)(7))
-                                    End If
-                                End If
-                            Next
-                            If Not mpi.Exists("MountFolder") Then
-                                'Set Root Folder
+                        If tempArray(j)(2) = mpi.Item("ID") Then
+                            If tempArray(j)(13) = mpi.Item("MountPoint") Then
                                 mpi.Add "MountFolder", ""
+                                Exit For
+                            End If
+                        End If
+                    Next
+                ' "Sync" and subfolder Case
+                Case "libraryFolder"
+                    For Each mpi In mpiCache
+                        If tempArray(j)(3) = mpi.Item("ID") Then
+                            If tempArray(j)(5) = mpi.Item("MountPoint") Then
+                                mpi.Add "MountFolder", Trim(tempArray(j)(7))
+                                Exit For
                             End If
                         End If
                     Next
                 ' "Add shortcut to OneDrive" Case
                 Case "AddedScope"
                     For Each mpi In mpiCache
-                        If mpi.Item("UrlNamespace") Like tempArray(j)(4) & "*" Then
-                            mpi.Add "FolderPath", Trim(tempArray(j)(10))
+                        If tempArray(j)(2) = mpi.Item("ID") Then
+                            If mpi.Item("UrlNamespace") Like tempArray(j)(4) & "*" Then
+                                mpi.Add "FolderPath", Trim(tempArray(j)(10))
+                                Exit For
+                            End If
                         End If
                     Next
-                Case Else
-                    'Nothing to do
             End Select
         Next
 
@@ -194,7 +197,8 @@ Already_Updated:
         Select Case True
         
             ' In case of MySite or personal
-            Case strLibraryType = "mysite" Or strLibraryType = "personal"
+            Case LCase(mpi.Item("ID")) = "personal" Or _
+                 LCase(mpi.Item("ID")) Like "business#"
                 tmpLocalPath = strMountPoint & subPath
                 GoTo Verify_Folder_Exists
         
