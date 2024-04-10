@@ -29,17 +29,17 @@ Option Explicit
 '
 ' Author: Excel VBA Diary (@excelvba_diary)
 ' Created: December 29, 2023
-' Last Updated: March 13, 2024
-' Version: 1.006
+' Last Updated: April 10, 2024
+' Version: 1.007
 ' License: MIT
 '-------------------------------------------------------------------------------
 
-Public Function GetLocalPath(UrlPath As String, _
+Public Function GetLocalPath(urlPath As String, _
                              Optional UseCache As Boolean = True, _
                              Optional DebugMode As Boolean = False) As Variant
     
-    If Not UrlPath Like "http*" And DebugMode = False Then
-        GetLocalPath = UrlPath
+    If Not urlPath Like "http*" And DebugMode = False Then
+        GetLocalPath = urlPath
         Exit Function
     End If
     
@@ -104,45 +104,53 @@ Public Function GetLocalPath(UrlPath As String, _
     Dim odsFolder As Variant, odsPath As String, odsIndex As Long, cid As String
     Dim tempArray As Variant, tempFolder As String, j As Long, k As Long
     For Each odsFolder In Split(ODS_FOLDERS, ",")
+        
         odsPath = Environ("USERPROFILE") & SETTINGS_PATH & "\" & odsFolder & "\"
         If Dir(odsPath) = "" Then GoTo Skip_Supplement
+        
         cid = IniKeyValue(odsPath & "global.ini", "cid")
         If cid = "" Then GoTo Skip_Supplement
+        
         tempArray = IniToArray(odsPath & cid & ".ini")
         If IsEmpty(tempArray) Then GoTo Skip_Supplement
         
         For j = LBound(tempArray) To UBound(tempArray)
             Select Case tempArray(j)(0)
-                ' "Sync" and Root folder Case
+                ' MySite or SharePoint site mounted by "Sync"
                 Case "libraryScope"
                     For Each mpi In mpiCache
                         If tempArray(j)(2) = mpi.Item("ID") Then
                             If tempArray(j)(13) = mpi.Item("MountPoint") Then
-                                mpi.Add "MountFolder", ""
+                                If tempArray(j)(4) = "MySite" Then
+                                    mpi.Add "RemotePath", ""
+                                Else
+                                    mpi.Add "RemoteFolder", ""
+                                End If
                                 Exit For
                             End If
                         End If
                     Next
-                ' "Sync" and subfolder Case
+                ' SharePoint site mounted by "Sync"
                 Case "libraryFolder"
                     For Each mpi In mpiCache
                         If tempArray(j)(3) = mpi.Item("ID") Then
                             If tempArray(j)(5) = mpi.Item("MountPoint") Then
-                                mpi.Add "MountFolder", Trim(tempArray(j)(7))
+                                mpi.Add "RemoteFolder", Trim(tempArray(j)(7))
                                 Exit For
                             End If
                         End If
                     Next
-                ' "Add shortcut to OneDrive" Case
+                ' SharePoint site mounted by "Add shortcut to OneDrive"
                 Case "AddedScope"
                     For Each mpi In mpiCache
                         If tempArray(j)(2) = mpi.Item("ID") Then
                             If mpi.Item("UrlNamespace") Like tempArray(j)(4) & "*" Then
-                                mpi.Add "FolderPath", Trim(tempArray(j)(10))
+                                mpi.Add "RemotePath", Trim(tempArray(j)(10))
                                 Exit For
                             End If
                         End If
                     Next
+
             End Select
         Next
 
@@ -162,6 +170,7 @@ Already_Updated:
     'Exit if no valid OneDrive mount information
     If mpiCache.Count = 0 Then Exit Function
    
+    
     'STEP-3
     'OneDriveマウント情報をもとにURLパスをローカルパスに変換する
     'Convert URL path to local path based on OneDrive mount information
@@ -175,67 +184,63 @@ Already_Updated:
     For Each mpi In mpiCache
         
         strUrlNamespace = mpi.Item("UrlNamespace")
-        strLibraryType = LCase(mpi.Item("LibraryType"))
-        
         If Right(strUrlNamespace, 1) = "/" Then
             strUrlNamespace = Left(strUrlNamespace, Len(strUrlNamespace) - 1)
         End If
-        If LCase(mpi.Item("ID")) = "personal" Then
-            strUrlNamespace = strUrlNamespace & "/" & mpi.Item("CID")
-        End If
         
-        If Not (UrlPath Like strUrlNamespace & "*") Then GoTo Skip_To_Next
+        If urlPath Like strUrlNamespace & "*" Then
         
-        subPath = Replace(UrlPath, strUrlNamespace, "")
-        subPath = Replace(subPath, "/", "\")
-        strMountPoint = mpi.Item("MountPoint")
-        If subPath = "" Or subPath = "\" Then
-            tmpLocalPath = strMountPoint
-            GoTo Verify_Folder_Exists
-        End If
+           subPath = Mid(urlPath, Len(strUrlNamespace) + 1)
+           subPath = Replace(subPath, "/", "\")
+           strMountPoint = mpi.Item("MountPoint")
+           
+           Select Case True
+           
+               ' personal account site
+               Case LCase(mpi.Item("ID")) = "personal"
+                   If subPath Like "\" & mpi.Item("CID") & "*" Then
+                      tmpLocalPath = strMountPoint & Mid(subPath, 18)
+                      GoTo Verify_Folder_Exists
+                   End If
+           
+               ' business account site
+               Case LCase(mpi.Item("ID")) Like "business#"
+                   tmpLocalPath = strMountPoint & subPath
+                   GoTo Verify_Folder_Exists
+           
+               ' My Site
+               Case LCase(mpi.Item("LibraryType")) = "mysite"
+                   tmpLocalPath = strMountPoint & subPath
+                   GoTo Verify_Folder_Exists
+               
+               ' SharePoint site mounted by "Add shortcut to OneDrive"
+               Case mpi.Exists("RemotePath")
+                   mountFolderPath = mpi.Item("RemotePath")
+                   If mountFolderPath <> "" Then
+                       mountFolderPath = "\" & Replace(mpi.Item("RemotePath"), "/", "\")
+                   End If
+                   If subPath Like mountFolderPath & "*" Then
+                       tmpLocalPath = strMountPoint & Mid(subPath, Len(mountFolderPath) + 1)
+                       GoTo Verify_Folder_Exists
+                   End If
         
-        Select Case True
-        
-            ' In case of MySite or personal
-            Case LCase(mpi.Item("ID")) = "personal" Or _
-                 LCase(mpi.Item("ID")) Like "business#"
-                tmpLocalPath = strMountPoint & subPath
-                GoTo Verify_Folder_Exists
-        
-            ' In case of mounting by "Add shortcut to OneDrive"
-            Case mpi.Exists("FolderPath")
-                mountFolderPath = mpi.Item("FolderPath")
-                If mountFolderPath <> "" Then
-                    mountFolderPath = "\" & Replace(mpi.Item("FolderPath"), "/", "\")
-                End If
-                If subPath Like mountFolderPath & "*" Then
-                    tmpLocalPath = strMountPoint & Mid(subPath, Len(mountFolderPath) + 1)
-                    GoTo Verify_Folder_Exists
-                End If
-                GoTo Skip_To_Next
-     
-            ' In case of mounting by "Sync"
-            Case mpi.Exists("MountFolder")
-                mountFolderName = mpi.Item("MountFolder")
-                If mountFolderName = "" Then
-                    tmpLocalPath = strMountPoint & subPath
-                    GoTo Verify_Folder_Exists
-                End If
-                i = InStr(1, subPath & "\", "\" & mountFolderName & "\")
-                If i > 0 Then
-                    subPath = Mid(subPath, i + Len(mountFolderName) + 1)
-                    tmpLocalPath = strMountPoint & subPath
-                    GoTo Verify_Folder_Exists
-                End If
-                GoTo Skip_To_Next
+               ' SharePoint site mounted by "Sync"
+               Case mpi.Exists("RemoteFolder")
+                   mountFolderName = mpi.Item("RemoteFolder")
+                   If mountFolderName = "" Then
+                       tmpLocalPath = strMountPoint & subPath
+                       GoTo Verify_Folder_Exists
+                   End If
+                   i = InStr(1, subPath & "\", "\" & mountFolderName & "\")
+                   If i > 0 Then
+                       subPath = Mid(subPath, i + Len(mountFolderName) + 1)
+                       tmpLocalPath = strMountPoint & subPath
+                       GoTo Verify_Folder_Exists
+                   End If
+   
+           End Select
 
-            ' In case of unexpected
-            Case Else
-                Exit Function
-        
-        End Select
-
-Skip_To_Next:
+        End If
     Next
 
     'URLパスに該当するマウント情報がないためローカルパスへの変換に失敗した
